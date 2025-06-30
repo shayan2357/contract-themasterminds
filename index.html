@@ -233,6 +233,40 @@
             width: 1em;
             margin-left: -1em;
         }
+
+        /* Modal Tabs Styling */
+        .modal-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #4a5568;
+        }
+        .modal-tab-button {
+            padding: 0.75rem 1.5rem;
+            background-color: transparent;
+            color: #cbd5e0;
+            border: none;
+            border-bottom: 2px solid transparent;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .modal-tab-button:hover {
+            color: #ffd700;
+            border-color: #ffd700;
+        }
+        .modal-tab-button.active {
+            color: #ffd700;
+            border-color: #ffd700;
+            background-color: #2d3748;
+            border-radius: 0.5rem 0.5rem 0 0;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -245,7 +279,7 @@
                 <a href="#home" class="text-gray-600 hover:text-blue-700 transition duration-300">Home</a>
                 <a href="#about" class="text-gray-600 hover:text-blue-700 transition duration-300">About Us</a>
                 <a href="#projects" class="text-gray-600 hover:text-blue-700 transition duration-300">Our Projects</a>
-                <a href="#amenities" class="text-gray-600 hover:text-blue-700 transition duration-300">Amenities</a>
+                <a href="#construction" class="text-gray-600 hover:text-blue-700 transition duration-300">Construction</a>
                 <a href="#contact" class="text-gray-600 hover:text-blue-700 transition duration-300">Contact</a>
             </div>
             <button id="mobile-menu-button" class="md:hidden text-gray-600 hover:text-blue-700 focus:outline-none">
@@ -257,7 +291,7 @@
             <a href="#home" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Home</a>
             <a href="#about" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">About Us</a>
             <a href="#projects" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Our Projects</a>
-            <a href="#amenities" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Amenities</a>
+            <a href="#construction" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Construction</a>
             <a href="#contact" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Contact</a>
         </div>
     </header>
@@ -336,9 +370,9 @@
                         <li>2 Kanal Houses & Plots</li>
                     </ul>
                     <h4 class="text-xl font-semibold text-gray-800 mb-3">Available for Sale and Rent.</h4>
-                    <button onclick="showPaymentPlan('citi-housing')" class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-6 rounded-full transition duration-300 transform hover:scale-105">
-                        Inquire Now
-                    </button>
+                    <a href="https://wa.me/923267788999" target="_blank" class="inline-block bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-6 rounded-full transition duration-300 transform hover:scale-105">
+                        Inquire Now on WhatsApp
+                    </a>
                 </div>
 
                 <!-- Pearl Residencia Project Card -->
@@ -364,58 +398,30 @@
 
     <!-- Payment Plan Section (Modal) -->
     <div id="payment-plan-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
-        <div class="bg-gray-800 p-8 rounded-lg shadow-xl max-w-3xl w-full m-4 relative">
-            <button onclick="closePaymentPlanModal()" class="absolute top-4 right-4 text-white text-2xl font-bold">&times;</button>
+        <div class="bg-gray-800 p-8 rounded-lg shadow-xl max-w-2xl w-full m-4 relative"> <!-- Changed max-w-4xl to max-w-2xl -->
+            <button onclick="closePaymentPlanModal()" class="absolute top-4 right-4 text-white text-3xl font-bold z-20">&times;</button> <!-- Increased font size and z-index -->
             <h2 id="payment-plan-title" class="text-3xl font-bold text-center mb-6 section-header gold-glow"></h2>
-            <div id="payment-plan-content" class="text-gray-200">
+            
+            <!-- Tabs for Pearl Residencia and ABM Hills -->
+            <div id="modal-tabs" class="modal-tabs">
+                <!-- Buttons will be injected here by JS -->
+            </div>
+            <div id="payment-plan-content" class="text-gray-200 overflow-y-auto max-h-96"> <!-- Added overflow-y-auto and max-height -->
                 <!-- Payment plan details will be injected here -->
             </div>
         </div>
     </div>
 
-
-    <!-- Amenities Section -->
-    <section id="amenities" class="py-16 bg-white">
-        <div class="container mx-auto px-4 md:px-8">
-            <h2 class="text-4xl font-bold text-center mb-12 section-header animate-on-scroll">World-Class Amenities</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 text-center">
-                <div class="amenity-item bg-white p-6 rounded-lg shadow-md card animate-on-scroll">
-                    <!-- Replace with actual Cafe image/icon -->
-                    <img src="https://raw.githubusercontent.com/yourusername/your-repo-name/main/images/cafe-icon.png" alt="Cafe Icon" class="amenity-icon mx-auto">
-                    <h3 class="text-xl font-semibold text-gray-800">Cafe</h3>
-                    <p class="text-gray-600">Enjoy freshly brewed coffee and delicious snacks in our cozy cafe.</p>
-                </div>
-                <div class="amenity-item bg-white p-6 rounded-lg shadow-md card animate-on-scroll">
-                    <!-- Replace with actual Fitness Centre image/icon -->
-                    <img src="https://raw.githubusercontent.com/yourusername/your-repo-name/main/images/fitness-icon.png" alt="Fitness Icon" class="amenity-icon mx-auto">
-                    <h3 class="text-xl font-semibold text-gray-800">Fitness Centre</h3>
-                    <p class="text-gray-600">State-of-the-art gym facilities to keep you active and healthy.</p>
-                </div>
-                <div class="amenity-item bg-white p-6 rounded-lg shadow-md card animate-on-scroll">
-                    <!-- Replace with actual Elevator image/icon -->
-                    <img src="https://raw.githubusercontent.com/yourusername/your-repo-name/main/images/elevator.jpg" alt="Elevator Icon" class="amenity-icon mx-auto">
-                    <h3 class="text-xl font-semibold text-gray-800">High-Speed Elevators</h3>
-                    <p class="text-gray-600">Fast and reliable elevators for convenient access to all floors.</p>
-                </div>
-                <div class="amenity-item bg-white p-6 rounded-lg shadow-md card animate-on-scroll">
-                    <!-- Replace with actual Parking image/icon -->
-                    <img src="https://raw.githubusercontent.com/yourusername/your-repo-name/main/images/parking.jpg" alt="Parking Icon" class="amenity-icon mx-auto">
-                    <h3 class="text-xl font-semibold text-gray-800">Ample Parking</h3>
-                    <p class="text-gray-600">Secure and spacious parking facilities for residents and guests.</p>
-                </div>
-                <div class="amenity-item bg-white p-6 rounded-lg shadow-md card animate-on-scroll">
-                    <!-- Replace with actual Balcony image/icon -->
-                    <img src="https://raw.githubusercontent.com/yourusername/your-repo-name/main/images/balcony.jpg" alt="Balcony Icon" class="amenity-icon mx-auto">
-                    <h3 class="text-xl font-semibold text-gray-800">Private Balconies</h3>
-                    <p class="text-gray-600">Enjoy stunning panoramic views from your private balcony.</p>
-                </div>
-                <div class="amenity-item bg-white p-6 rounded-lg shadow-md card animate-on-scroll">
-                    <!-- Replace with actual Security image/icon -->
-                    <img src="https://raw.githubusercontent.com/yourusername/your-repo-name/main/images/security.jpg" alt="Security Icon" class="amenity-icon mx-auto">
-                    <h3 class="text-xl font-semibold text-gray-800">24/7 Security</h3>
-                    <p class="text-gray-600">Round-the-clock security for a safe and peaceful living environment.</p>
-                </div>
-            </div>
+    <!-- Construction Progress Section (New) -->
+    <section id="construction" class="hero-section">
+        <canvas id="construction-canvas"></canvas>
+        <div class="hero-content">
+            <h2 class="text-4xl md:text-5xl font-extrabold mb-4 leading-tight gold-glow">Construction Progress</h2>
+            <p class="text-xl md:text-2xl font-light mb-8">Witness our commitment to excellence, building your future, brick by brick.</p>
+            <p class="text-lg text-gray-200">
+                At Dynamic Capital Estate, we believe in transparency and progress. Our ongoing projects are a testament to our dedication to quality construction and timely delivery.
+                Experience the evolution of your dream property from the ground up.
+            </p>
         </div>
     </section>
 
@@ -514,8 +520,8 @@
             };
         });
 
-        // Three.js 3D Background Animation
-        window.onload = function() {
+        // Three.js 3D Background Animation (Hero Section)
+        window.onload = function () {
             const canvas = document.getElementById('three-js-canvas');
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -523,20 +529,17 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(window.devicePixelRatio);
 
-            // Create a more complex geometry for aesthetic mountains
-            const geometry = new THREE.PlaneGeometry(300, 300, 128, 128); // Larger and more segments
+            const geometry = new THREE.PlaneGeometry(300, 300, 128, 128);
             const positions = geometry.attributes.position.array;
 
             for (let i = 0; i < positions.length; i += 3) {
-                // More varied displacement for mountain peaks and valleys
-                positions[i + 2] += (Math.random() * 2 - 1) * 20; // Random height
-                positions[i + 2] += Math.sin(positions[i] * 0.05) * 5; // Wave-like pattern
+                positions[i + 2] += (Math.random() * 2 - 1) * 20;
+                positions[i + 2] += Math.sin(positions[i] * 0.05) * 5;
                 positions[i + 2] += Math.cos(positions[i+1] * 0.05) * 5;
             }
             geometry.attributes.position.needsUpdate = true;
             geometry.computeVertexNormals();
 
-            // Shader material for cloudy, dark, aesthetic effect
             const vertexShader = `
                 uniform float time;
                 varying vec2 vUv;
@@ -545,7 +548,6 @@
                 void main() {
                     vUv = uv;
                     vec3 newPosition = position;
-                    // Subtle, slow movement for clouds/mist
                     newPosition.z += sin(newPosition.x * 0.02 + time * 0.005) * 1.5;
                     newPosition.z += cos(newPosition.y * 0.02 + time * 0.005) * 1.5;
                     
@@ -563,10 +565,7 @@
                 varying float vElevation;
 
                 void main() {
-                    // Blend colors based on elevation and subtle time-based shift
                     vec3 color = mix(color1, color2, (vElevation + 20.0) / 40.0);
-                    
-                    // Add subtle noise for texture
                     float noise = fract(sin(dot(vUv * 20.0, vec2(12.9898, 78.233))) * 43758.5453 + time * 0.1);
                     color += noise * 0.03;
 
@@ -577,26 +576,23 @@
             const material = new THREE.ShaderMaterial({
                 uniforms: {
                     time: { value: 0.0 },
-                    // Darker, more muted colors for aesthetic mountains
-                    color1: { value: new THREE.Color(0x1a202c) }, /* Darkest blue-gray */
-                    color2: { value: new THREE.Color(0x0d1117) }  /* Even darker, almost black */
+                    color1: { value: new THREE.Color(0x1a202c) },
+                    color2: { value: new THREE.Color(0x0d1117) }
                 },
                 vertexShader: vertexShader,
                 fragmentShader: fragmentShader,
                 transparent: true,
-                opacity: 0.9, /* Increased opacity for more solid mountains */
+                opacity: 0.9,
                 side: THREE.DoubleSide
             });
 
             const mesh = new THREE.Mesh(geometry, material);
             scene.add(mesh);
 
-            // Position the camera to look at the mountains
             camera.position.z = 150;
             camera.position.y = 50;
-            camera.rotation.x = -Math.PI / 6; // Look down more for mountain view
+            camera.rotation.x = -Math.PI / 6;
 
-            // Mouse interaction for camera movement
             let mouseX = 0, mouseY = 0;
             let targetX = 0, targetY = 0;
             const windowHalfX = window.innerWidth / 2;
@@ -607,45 +603,135 @@
                 mouseY = (event.clientY - windowHalfY);
             });
 
-            // Handle window resize
             window.addEventListener('resize', () => {
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
                 renderer.setSize(window.innerWidth, window.innerHeight);
             });
 
-            // Animation loop
             const animate = () => {
                 requestAnimationFrame(animate);
+                material.uniforms.time.value += 0.002;
+                targetX = mouseX * 0.00003;
+                targetY = mouseY * 0.00003;
+                mesh.rotation.y += (targetX - mesh.rotation.y) * 0.02;
+                mesh.rotation.x += (targetY - mesh.rotation.x) * 0.02;
+                renderer.render(scene, camera);
+            };
 
-                material.uniforms.time.value += 0.002; // Very slow animation for subtle cloud/mist movement
+            animate();
+        };
 
-                // Smooth camera movement based on mouse
-                targetX = mouseX * 0.00003; // Even lower sensitivity
-                targetY = mouseY * 0.00003; // Even lower sensitivity
+        // Three.js 3D Background Animation (Construction Section)
+        window.addEventListener('load', function() {
+            const canvas = document.getElementById('construction-canvas');
+            if (!canvas) return; // Exit if canvas doesn't exist
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+            renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+
+            // Add simple building blocks (cubes)
+            const cubeGeometry = new THREE.BoxGeometry(10, 10, 10);
+            const cubeMaterial = new THREE.MeshPhongMaterial({ color: 0x888888, flatShading: true }); // Grey for concrete/steel
+
+            for (let i = 0; i < 50; i++) {
+                const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+                cube.position.x = (Math.random() - 0.5) * 150;
+                cube.position.y = (Math.random() - 0.5) * 50;
+                cube.position.z = (Math.random() - 0.5) * 150;
+                cube.rotation.x = Math.random() * Math.PI;
+                cube.rotation.y = Math.random() * Math.PI;
+                scene.add(cube);
+            }
+
+            // Add a ground plane
+            const groundGeometry = new THREE.PlaneGeometry(300, 300);
+            const groundMaterial = new THREE.MeshPhongMaterial({ color: 0x555555, side: THREE.DoubleSide });
+            const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+            ground.rotation.x = -Math.PI / 2;
+            ground.position.y = -30;
+            scene.add(ground);
+
+            // Add ambient light
+            const ambientLight = new THREE.AmbientLight(0x404040); // Soft white light
+            scene.add(ambientLight);
+
+            // Add directional light (like sunlight)
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(100, 100, 50);
+            scene.add(directionalLight);
+
+            camera.position.set(0, 50, 100);
+            camera.lookAt(0, 0, 0);
+
+            // Mouse interaction for camera movement
+            let mouseX = 0, mouseY = 0;
+            let targetX = 0, targetY = 0;
+            const windowHalfX = window.innerWidth / 2;
+            const windowHalfY = window.innerHeight / 2;
+
+            canvas.addEventListener('mousemove', (event) => {
+                mouseX = (event.clientX - windowHalfX);
+                mouseY = (event.clientY - windowHalfY);
+            });
+
+            window.addEventListener('resize', () => {
+                const width = canvas.clientWidth;
+                const height = canvas.clientHeight;
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+                renderer.setSize(width, height);
+            });
+
+            const animateConstruction = () => {
+                requestAnimationFrame(animateConstruction);
+
+                // Rotate the scene slightly to show dynamic construction
+                scene.rotation.y += 0.001;
+
+                targetX = mouseX * 0.00005;
+                targetY = mouseY * 0.00005;
                 
-                mesh.rotation.y += (targetX - mesh.rotation.y) * 0.02; // Slower rotation
-                mesh.rotation.x += (targetY - mesh.rotation.x) * 0.02; // Slower rotation
+                camera.position.x += (targetX - camera.position.x) * 0.05;
+                camera.position.y += (-targetY - camera.position.y + 50) * 0.05; // Keep camera higher
+                camera.lookAt(scene.position);
 
                 renderer.render(scene, camera);
             };
 
-            animate(); // Start the animation loop
-        };
+            animateConstruction();
+        });
+
 
         // Function to show payment plan modal
         function showPaymentPlan(project) {
             const modal = document.getElementById('payment-plan-modal');
             const title = document.getElementById('payment-plan-title');
             const content = document.getElementById('payment-plan-content');
+            const modalTabs = document.getElementById('modal-tabs');
             
-            let planHtml = '';
+            // Clear previous content and tabs
+            content.innerHTML = '';
+            modalTabs.innerHTML = '';
 
-            switch(project) {
-                case 'abm-hills':
-                    title.textContent = 'ABM Hills Payment Plan';
-                    planHtml = `
-                        <p class="text-lg text-gray-700 mb-4">Easy Installment Plans for Luxury Apartments:</p>
+            if (project === 'citi-housing') {
+                // Redirect directly to WhatsApp for Citi Housing
+                window.open('https://wa.me/923267788999', '_blank');
+                return; // Exit function as we are redirecting
+            }
+
+            modal.classList.remove('hidden');
+
+            let planData = {};
+
+            if (project === 'abm-hills') {
+                title.textContent = 'ABM Hills Payment Plan';
+                planData = {
+                    '1-Bed Apartment': `
+                        <p class="text-lg text-gray-700 mb-4">Easy Installment Plan for Luxury 1-Bed Apartments:</p>
                         <table class="min-w-full bg-gray-700 rounded-lg shadow-lg payment-table">
                             <thead>
                                 <tr>
@@ -664,98 +750,132 @@
                                 <tr class="font-bold bg-blue-100 text-blue-900"><td class="py-3 px-4" colspan="2">22,000 PER SQ FT</td></tr>
                             </tbody>
                         </table>
-                    `;
-                    break;
-                case 'citi-housing':
-                    title.textContent = 'Citi Housing Faisalabad - Inquiry';
-                    planHtml = `
-                        <p class="text-lg text-gray-700 mb-4">For detailed pricing and availability of 5 Marla, 10 Marla, 1 Kanal, and 2 Kanal houses and plots in Citi Housing Sargodha Road, Faisalabad (for sale and rent), please contact us directly:</p>
-                        <p class="text-xl font-bold text-blue-700 mb-2">
-                            <a href="https://wa.me/923126613381" target="_blank" class="hover:underline">WhatsApp: 0312-6613381</a>
-                        </p>
-                        <p class="text-xl font-bold text-blue-700 mb-6">
-                            <a href="https://wa.me/923267788999" target="_blank" class="hover:underline">WhatsApp: 0326-7788999</a>
-                        </p>
-                        <p class="text-lg text-gray-700">Our team will provide you with comprehensive information and guide you through the process.</p>
-                    `;
-                    break;
-                case 'pearl-residencia':
-                    title.textContent = 'Pearl Residencia Payment Plans';
-                    planHtml = `
-                        <p class="text-lg text-gray-700 mb-4">5 Year Easy Payment Plans for Pearl Residencia Plots:</p>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="bg-gray-700 p-4 rounded-lg shadow-md">
-                                <h4 class="text-xl font-semibold text-gray-800 mb-3">3 Marla Plot</h4>
-                                <table class="min-w-full payment-table">
-                                    <tbody>
-                                        <tr><td class="py-2 px-3">15% Booking</td><td class="py-2 px-3 text-right">295,000</td></tr>
-                                        <tr><td class="py-2 px-3">After 60 Days</td><td class="py-2 px-3 text-right">195,000</td></tr>
-                                        <tr><td class="py-2 px-3">60 x Monthly</td><td class="py-2 px-3 text-right">15,000</td></tr>
-                                        <tr><td class="py-2 px-3">10 x Half Yearly</td><td class="py-2 px-3 text-right">36,500</td></tr>
-                                        <tr><td class="py-2 px-3">On Possession</td><td class="py-2 px-3 text-right">195,000</td></tr>
-                                        <tr class="font-bold bg-blue-50 text-blue-800"><td class="py-2 px-3">TOTAL PRICE</td><td class="py-2 px-3 text-right">1,950,000</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="bg-gray-700 p-4 rounded-lg shadow-md">
-                                <h4 class="text-xl font-semibold text-gray-800 mb-3">5 Marla Plot</h4>
-                                <table class="min-w-full payment-table">
-                                    <tbody>
-                                        <tr><td class="py-2 px-3">15% Booking</td><td class="py-2 px-3 text-right">490,000</td></tr>
-                                        <tr><td class="py-2 px-3">After 60 Days</td><td class="py-2 px-3 text-right">325,000</td></tr>
-                                        <tr><td class="py-2 px-3">60 x Monthly</td><td class="py-2 px-3 text-right">25,000</td></tr>
-                                        <tr><td class="py-2 px-3">10 x Half Yearly</td><td class="py-2 px-3 text-right">61,000</td></tr>
-                                        <tr><td class="py-2 px-3">On Possession</td><td class="py-2 px-3 text-right">325,000</td></tr>
-                                        <tr class="font-bold bg-blue-50 text-blue-800"><td class="py-2 px-3">TOTAL PRICE</td><td class="py-2 px-3 text-right">3,250,000</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="bg-gray-700 p-4 rounded-lg shadow-md">
-                                <h4 class="text-xl font-semibold text-gray-800 mb-3">7 Marla Plot</h4>
-                                <table class="min-w-full payment-table">
-                                    <tbody>
-                                        <tr><td class="py-2 px-3">15% Booking</td><td class="py-2 px-3 text-right">685,000</td></tr>
-                                        <tr><td class="py-2 px-3">After 60 Days</td><td class="py-2 px-3 text-right">455,000</td></tr>
-                                        <tr><td class="py-2 px-3">60 x Monthly</td><td class="py-2 px-3 text-right">35,000</td></tr>
-                                        <tr><td class="py-2 px-3">10 x Half Yearly</td><td class="py-2 px-3 text-right">85,500</td></tr>
-                                        <tr><td class="py-2 px-3">On Possession</td><td class="py-2 px-3 text-right">455,000</td></tr>
-                                        <tr class="font-bold bg-blue-50 text-blue-800"><td class="py-2 px-3">TOTAL PRICE</td><td class="py-2 px-3 text-right">4,550,000</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="bg-gray-700 p-4 rounded-lg shadow-md">
-                                <h4 class="text-xl font-semibold text-gray-800 mb-3">10 Marla Plot</h4>
-                                <table class="min-w-full payment-table">
-                                    <tbody>
-                                        <tr><td class="py-2 px-3">15% Booking</td><td class="py-2 px-3 text-right">975,000</td></tr>
-                                        <tr><td class="py-2 px-3">After 60 Days</td><td class="py-2 px-3 text-right">650,000</td></tr>
-                                        <tr><td class="py-2 px-3">60 x Monthly</td><td class="py-2 px-3 text-right">50,000</td></tr>
-                                        <tr><td class="py-2 px-3">10 x Half Yearly</td><td class="py-2 px-3 text-right">122,500</td></tr>
-                                        <tr><td class="py-2 px-3">On Possession</td><td class="py-2 px-3 text-right">650,000</td></tr>
-                                        <tr class="font-bold bg-blue-50 text-blue-800"><td class="py-2 px-3">TOTAL PRICE</td><td class="py-2 px-3 text-right">6,500,000</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="bg-gray-700 p-4 rounded-lg shadow-md">
-                                <h4 class="text-xl font-semibold text-gray-800 mb-3">20 Marla Plot</h4>
-                                <table class="min-w-full payment-table">
-                                    <tbody>
-                                        <tr><td class="py-2 px-3">15% Booking</td><td class="py-2 px-3 text-right">1,950,000</td></tr>
-                                        <tr><td class="py-2 px-3">After 60 Days</td><td class="py-2 px-3 text-right">1,300,000</td></tr>
-                                        <tr><td class="py-2 px-3">60 x Monthly</td><td class="py-2 px-3 text-right">100,000</td></tr>
-                                        <tr><td class="py-2 px-3">10 x Half Yearly</td><td class="py-2 px-3 text-right">245,000</td></tr>
-                                        <tr><td class="py-2 px-3">On Possession</td><td class="py-2 px-3 text-right">1,300,000</td></tr>
-                                        <tr class="font-bold bg-blue-50 text-blue-800"><td class="py-2 px-3">TOTAL PRICE</td><td class="py-2 px-3 text-right">13,000,000</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    `;
-                    break;
+                    `,
+                    '2-Bed Apartment': `
+                        <p class="text-lg text-gray-700 mb-4">Easy Installment Plan for Luxury 2-Bed Apartments:</p>
+                        <table class="min-w-full bg-gray-700 rounded-lg shadow-lg payment-table">
+                            <thead>
+                                <tr>
+                                    <th class="py-3 px-4 uppercase font-semibold text-sm text-gray-600">Milestone</th>
+                                    <th class="py-3 px-4 uppercase font-semibold text-sm text-gray-600 text-right">Amount (PKR)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td class="py-3 px-4">Booking</td><td class="py-3 px-4 text-right">1,500,000</td></tr>
+                                <tr><td class="py-3 px-4">Confirmation</td><td class="py-3 px-4 text-right">1,500,000</td></tr>
+                                <tr><td class="py-3 px-4">36 Monthly Installments</td><td class="py-3 px-4 text-right">150,000</td></tr>
+                                <tr><td class="py-3 px-4">6 Half Yearly</td><td class="py-3 px-4 text-right">800,000</td></tr>
+                                <tr><td class="py-3 px-4">Grey Structure</td><td class="py-3 px-4 text-right">1,500,000</td></tr>
+                                <tr><td class="py-3 px-4">On Possession</td><td class="py-3 px-4 text-right">1,800,000</td></tr>
+                                <tr class="font-bold bg-blue-50 text-blue-800"><td class="py-3 px-4">TOTAL</td><td class="py-3 px-4 text-right">16,100,000</td></tr>
+                                <tr class="font-bold bg-blue-100 text-blue-900"><td class="py-3 px-4" colspan="2">22,000 PER SQ FT</td></tr>
+                            </tbody>
+                        </table>
+                    `
+                };
+            } else if (project === 'pearl-residencia') {
+                title.textContent = 'Pearl Residencia Payment Plans';
+                planData = {
+                    '3 Marla': `
+                        <h4 class="text-xl font-semibold text-gray-800 mb-3">3 Marla Plot - 5 Year Easy Payment Plan</h4>
+                        <table class="min-w-full payment-table">
+                            <tbody>
+                                <tr><td class="py-2 px-3">15% Booking</td><td class="py-2 px-3 text-right">295,000</td></tr>
+                                <tr><td class="py-2 px-3">After 60 Days</td><td class="py-2 px-3 text-right">195,000</td></tr>
+                                <tr><td class="py-2 px-3">60 x Monthly</td><td class="py-2 px-3 text-right">15,000</td></tr>
+                                <tr><td class="py-2 px-3">10 x Half Yearly</td><td class="py-2 px-3 text-right">36,500</td></tr>
+                                <tr><td class="py-2 px-3">On Possession</td><td class="py-2 px-3 text-right">195,000</td></tr>
+                                <tr class="font-bold bg-blue-50 text-blue-800"><td class="py-2 px-3">TOTAL PRICE</td><td class="py-2 px-3 text-right">1,950,000</td></tr>
+                            </tbody>
+                        </table>
+                    `,
+                    '5 Marla': `
+                        <h4 class="text-xl font-semibold text-gray-800 mb-3">5 Marla Plot - 5 Year Easy Payment Plan</h4>
+                        <table class="min-w-full payment-table">
+                            <tbody>
+                                <tr><td class="py-2 px-3">15% Booking</td><td class="py-2 px-3 text-right">490,000</td></tr>
+                                <tr><td class="py-2 px-3">After 60 Days</td><td class="py-2 px-3 text-right">325,000</td></tr>
+                                <tr><td class="py-2 px-3">60 x Monthly</td><td class="py-2 px-3 text-right">25,000</td></tr>
+                                <tr><td class="py-2 px-3">10 x Half Yearly</td><td class="py-2 px-3 text-right">61,000</td></tr>
+                                <tr><td class="py-2 px-3">On Possession</td><td class="py-2 px-3 text-right">325,000</td></tr>
+                                <tr class="font-bold bg-blue-50 text-blue-800"><td class="py-2 px-3">TOTAL PRICE</td><td class="py-2 px-3 text-right">3,250,000</td></tr>
+                            </tbody>
+                        </table>
+                    `,
+                    '7 Marla': `
+                        <h4 class="text-xl font-semibold text-gray-800 mb-3">7 Marla Plot - 5 Year Easy Payment Plan</h4>
+                        <table class="min-w-full payment-table">
+                            <tbody>
+                                <tr><td class="py-2 px-3">15% Booking</td><td class="py-2 px-3 text-right">685,000</td></tr>
+                                <tr><td class="py-2 px-3">After 60 Days</td><td class="py-2 px-3 text-right">455,000</td></tr>
+                                <tr><td class="py-2 px-3">60 x Monthly</td><td class="py-2 px-3 text-right">35,000</td></tr>
+                                <tr><td class="py-2 px-3">10 x Half Yearly</td><td class="py-2 px-3 text-right">85,500</td></tr>
+                                <tr><td class="py-2 px-3">On Possession</td><td class="py-2 px-3 text-right">455,000</td></tr>
+                                <tr class="font-bold bg-blue-50 text-blue-800"><td class="py-2 px-3">TOTAL PRICE</td><td class="py-2 px-3 text-right">4,550,000</td></tr>
+                            </tbody>
+                        </table>
+                    `,
+                    '10 Marla': `
+                        <h4 class="text-xl font-semibold text-gray-800 mb-3">10 Marla Plot - 5 Year Easy Payment Plan</h4>
+                        <table class="min-w-full payment-table">
+                            <tbody>
+                                <tr><td class="py-2 px-3">15% Booking</td><td class="py-2 px-3 text-right">975,000</td></tr>
+                                <tr><td class="py-2 px-3">After 60 Days</td><td class="py-2 px-3 text-right">650,000</td></tr>
+                                <tr><td class="py-2 px-3">60 x Monthly</td><td class="py-2 px-3 text-right">50,000</td></tr>
+                                <tr><td class="py-2 px-3">10 x Half Yearly</td><td class="py-2 px-3 text-right">122,500</td></tr>
+                                <tr><td class="py-2 px-3">On Possession</td><td class="py-2 px-3 text-right">650,000</td></tr>
+                                <tr class="font-bold bg-blue-50 text-blue-800"><td class="py-2 px-3">TOTAL PRICE</td><td class="py-2 px-3 text-right">6,500,000</td></tr>
+                            </tbody>
+                        </table>
+                    `,
+                    '20 Marla': `
+                        <h4 class="text-xl font-semibold text-gray-800 mb-3">20 Marla Plot - 5 Year Easy Payment Plan</h4>
+                        <table class="min-w-full payment-table">
+                            <tbody>
+                                <tr><td class="py-2 px-3">15% Booking</td><td class="py-2 px-3 text-right">1,950,000</td></tr>
+                                <tr><td class="py-2 px-3">After 60 Days</td><td class="py-2 px-3 text-right">1,300,000</td></tr>
+                                <tr><td class="py-2 px-3">60 x Monthly</td><td class="py-2 px-3 text-right">100,000</td></tr>
+                                <tr><td class="py-2 px-3">10 x Half Yearly</td><td class="py-2 px-3 text-right">245,000</td></tr>
+                                <tr><td class="py-2 px-3">On Possession</td><td class="py-2 px-3 text-right">1,300,000</td></tr>
+                                <tr class="font-bold bg-blue-50 text-blue-800"><td class="py-2 px-3">TOTAL PRICE</td><td class="py-2 px-3 text-right">13,000,000</td></tr>
+                                
+                            </tbody>
+                        </table>
+                    `
+                };
             }
-            content.innerHTML = planHtml;
-            modal.classList.remove('hidden');
+
+            // Create tabs
+            Object.keys(planData).forEach((key, index) => {
+                const button = document.createElement('button');
+                button.textContent = key;
+                button.classList.add('modal-tab-button');
+                button.onclick = () => showTab(key, planData, content, modalTabs);
+                modalTabs.appendChild(button);
+            });
+
+            // Show the first tab by default
+            if (Object.keys(planData).length > 0) {
+                showTab(Object.keys(planData)[0], planData, content, modalTabs);
+            }
         }
+
+        function showTab(tabName, planData, contentElement, tabsContainer) {
+            // Deactivate all tab buttons
+            Array.from(tabsContainer.children).forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Activate the clicked tab button
+            const activeTabButton = Array.from(tabsContainer.children).find(button => button.textContent === tabName);
+            if (activeTabButton) {
+                activeTabButton.classList.add('active');
+            }
+
+            // Update content
+            contentElement.innerHTML = planData[tabName];
+        }
+
 
         function closePaymentPlanModal() {
             document.getElementById('payment-plan-modal').classList.add('hidden');
