@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABM Hills - Live Above the Clouds</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Three.js Library for 3D background -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a202c; /* Dark background */
+            color: #e2e8f0; /* Light text for contrast */
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+        /* Styling for the hero section with the 3D canvas */
+        .hero-section {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            background-color: #0A2342; /* Fallback background */
+        }
+        #three-js-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0; /* Behind content */
+            opacity: 0.7; /* Slightly increased opacity for more presence */
+        }
+        .hero-content {
+            z-index: 1; /* Above the canvas */
+            position: relative; /* Ensure it's positioned above the canvas */
+            animation: fadeInScale 1.5s ease-out forwards;
+            background: rgba(0, 0, 0, 0.5); /* Darker overlay for better text readability */
+            padding: 2.5rem 2rem; /* Increased padding */
+            border-radius: 1.5rem; /* More rounded corners */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4); /* Stronger shadow */
+        }
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        .section-header {
+            position: relative;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+            color: #f7fafc; /* Lighter color for headers */
+        }
+        .section-header::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: #63b3ed; /* Accent color */
+            border-radius: 2px;
+        }
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background-color: #2d3748; /* Darker card background */
+            color: #e2e8f0; /* Light text for cards */
+            border-radius: 0.75rem; /* More rounded corners */
+            overflow: hidden;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3); /* Stronger shadow */
+        }
+        .amenity-icon {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
+            filter: drop-shadow(0 0 8px rgba(99, 179, 237, 0.7)); /* Stronger subtle glow */
+        }
+        .amenity-item:hover .amenity-icon {
+            transform: scale(1.1);
+        }
+        .parallax-bg {
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8); /* Stronger text shadow */
+            position: relative;
+        }
+        .parallax-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Darker overlay for parallax images */
+            z-index: 0;
+        }
+        .parallax-bg h2 {
+            z-index: 1; /* Ensure text is above overlay */
+        }
+        .parallax-1 {
+            background-image: url('https://raw.githubusercontent.com/yourusername/your-repo-name/main/images/luxury-apartment-bg.jpg'); /* Replace with your image */
+        }
+        .parallax-2 {
+            background-image: url('https://raw.githubusercontent.com/yourusername/your-repo-name/main/images/murree-view-bg.jpg'); /* Replace with your image */
+        }
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .animate-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .payment-table {
+            background-color: #2d3748; /* Darker table background */
+            color: #e2e8f0;
+            border-radius: 0.75rem;
+        }
+        .payment-table th, .payment-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #4a5568; /* Darker border */
+        }
+        .payment-table th {
+            background-color: #4a5568; /* Darker header background */
+            font-weight: 600;
+        }
+        .payment-table tr:nth-child(even) {
+            background-color: #2c3440; /* Slightly different row color */
+        }
+        .payment-table tr.font-bold {
+            background-color: #4299e1; /* Accent color for total rows */
+            color: white;
+        }
+        .social-icon {
+            transition: transform 0.3s ease;
+            color: #63b3ed; /* Accent color for social icons */
+        }
+        .social-icon:hover {
+            transform: scale(1.2);
+            color: #90cdf4; /* Lighter accent on hover */
+        }
+        .text-blue-700 {
+            color: #63b3ed; /* Adjusting primary blue to accent color */
+        }
+        .bg-blue-700 {
+            background-color: #4299e1; /* Adjusting primary blue to accent color */
+        }
+        .hover\:bg-blue-800:hover {
+            background-color: #3182ce; /* Darker accent on hover */
+        }
+        .text-pink-500 {
+            color: #fc8181; /* Adjusting pink for dark theme */
+        }
+        .hover\:text-pink-700:hover {
+            color: #e53e3e; /* Darker pink on hover */
+        }
+        /* General text color adjustments for dark theme */
+        .text-gray-800 { color: #f7fafc; }
+        .text-gray-700 { color: #e2e8f0; }
+        .text-gray-600 { color: #cbd5e0; }
+        .bg-white { background-color: #2d3748; } /* Darker white sections */
+        .bg-gray-100 { background-color: #1a202c; } /* Keeping this as the body background for consistency */
+
+        /* Specific fix for text visibility in sections with bg-gray-100 (like Contact Us) */
+        .bg-gray-100 .text-gray-700 {
+            color: #f7fafc; /* Make text almost white for better contrast on dark gray background */
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header & Navigation -->
+    <header class="bg-white shadow-md fixed w-full z-50 py-4">
+        <nav class="container mx-auto flex justify-between items-center px-4 md:px-8">
+            <div class="text-2xl font-bold text-gray-800">ABM HILLS</div>
+            <div class="hidden md:flex space-x-6">
+                <a href="#home" class="text-gray-600 hover:text-blue-700 transition duration-300">Home</a>
+                <a href="#about" class="text-gray-600 hover:text-blue-700 transition duration-300">About Us</a>
+                <a href="#apartments" class="text-gray-600 hover:text-blue-700 transition duration-300">Apartments</a>
+                <a href="#amenities" class="text-gray-600 hover:text-blue-700 transition duration-300">Amenities</a>
+                <a href="#payment-plan" class="text-gray-600 hover:text-blue-700 transition duration-300">Payment Plan</a>
+                <a href="#contact" class="text-gray-600 hover:text-blue-700 transition duration-300">Contact</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden text-gray-600 hover:text-blue-700 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+        </nav>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white py-2 shadow-lg">
+            <a href="#home" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Home</a>
+            <a href="#about" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">About Us</a>
+            <a href="#apartments" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Apartments</a>
+            <a href="#amenities" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Amenities</a>
+            <a href="#payment-plan" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Payment Plan</a>
+            <a href="#contact" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Contact</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+        <canvas id="three-js-canvas"></canvas>
+        <div class="hero-content">
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-4 leading-tight">ABM HILLS</h1>
+            <p class="text-xl md:text-2xl font-light mb-8">LIVE ABOVE THE CLOUDS</p>
+            <a href="#apartments" class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105">
+                Explore Apartments
+            </a>
+        </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section id="about" class="py-16 bg-white">
+        <div class="container mx-auto px-4 md:px-8">
+            <h2 class="text-4xl font-bold text-center mb-12 section-header animate-on-scroll">About ABM Hills</h2>
+            <div class="flex flex-col md:flex-row items-center md:space-x-12">
+                <div class="md:w-1/2 mb-8 md:mb-0 animate-on-scroll">
+                    <!-- Replace with actual Chairman image -->
+                    <img src="https://raw.githubusercontent.com/yourusername/your-repo-name/main/images/chairman.jpg" alt="Chairman Abu Bakar Malik" class="rounded-lg shadow-xl w-full h-auto object-cover">
+                </div>
+                <div class="md:w-1/2 animate-on-scroll">
+                    <h3 class="text-3xl font-semibold text-gray-800 mb-4">Chairman's Message</h3>
+                    <p class="text-lg text-gray-700 leading-relaxed mb-4">
+                        "We are delighted to introduce ABM Hills, our latest project nestled in the serene Murree Hills. Building on the success of our flagship development, The Park Residence, which set new standards for luxury and comfort, ABM Hills takes hillside living to new heights. This premier project offers modern, thoughtfully designed residences with breathtaking views and exceptional investment potential. Join us in shaping the future of real estate and experience the unmatched charm of Murree with ABM Hills."
+                    </p>
+                    <p class="text-xl font-bold text-blue-700">- Abu Bakar Malik, Chairman ABM Holdings</p>
+                </div>
+            </div>
+            <div class="mt-16 animate-on-scroll">
+                <h3 class="text-3xl font-semibold text-gray-800 mb-4 text-center">Our Previous Project: The Park Residence</h3>
+                <div class="flex flex-col md:flex-row items-center md:space-x-12 mt-8">
+                    <div class="md:w-1/2 mb-8 md:mb-0">
+                        <!-- Replace with actual Park Residence image -->
+                        <img src="https://raw.githubusercontent.com/yourusername/your-repo-name/main/images/park-residence.jpg" alt="The Park Residence" class="rounded-lg shadow-xl w-full h-auto object-cover">
+                    </div>
+                    <div class="md:w-1/2">
+                        <p class="text-lg text-gray-700 leading-relaxed">
+                            The Park Residence is a successful project by ABM Developers, offering a prime location in Sector A Bahria Town, Lahore. With a stunning park-facing view, this high-rise apartment complex provides residents with modern living spaces and top-tier amenities. Experience breathtaking cityscapes, a serene park environment, and the convenience of being close to shopping, dining, and entertainment making The Park Residence the perfect blend of luxury and accessibility.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABM Hills Overview -->
+    <section class="py-16 bg-gray-100">
+        <div class="container mx-auto px-4 md:px-8">
+            <h2 class="text-4xl font-bold text-center mb-12 section-header animate-on-scroll">Discover ABM Hills</h2>
+            <div class="flex flex-col md:flex-row items-center md:space-x-12">
+                <div class="md:w-1/2 mb-8 md:mb-0 animate-on-scroll">
+                    <!-- Replace with actual ABM Hills Exterior image -->
+                    <img src="https://raw.githubusercontent.com/yourusername/your-repo-name/main/images/abm-hills-exterior.jpg" alt="ABM Hills Exterior" class="rounded-lg shadow-xl w-full h-auto object-cover">
+                </div>
+                <div class="md:w-1/2 animate-on-scroll">
+                    <p class="text-lg text-gray-700 leading-relaxed mb-4">
+                        Discover ABM Hills, a premium project by ABM Developers where luxury living meets beautiful natural views. Led by Chairman Abu Bakr Malik, ABM Holdings brings you the chance to own your dream apartment in a peaceful and safe community.
+                    </p>
+                    <p class="text-lg text-gray-700 leading-relaxed mb-4">
+                        Your perfect apartment in the beautiful hills of Murree. Whether you're seeking a family retreat, a relaxing vacation spot, or a smart investment, ABM Hills has it all. Experience comfort, serenity, and the beauty of Murree in one place - your dream apartment where peace meets possibility.
+                    </p>
+                    <p class="text-lg text-gray-700 leading-relaxed">
+                        Located on Murree Expressway, just a 40-minute drive from Islamabad, ABM Hills offers beautifully designed 1-bed and 2-bed apartments. Whether you want a cozy home, a vacation retreat, or a great investment, ABM Hills is made for you. With easy installment plans and top-notch amenities, ABM Hills is where every day feels like living above the clouds.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Apartments Section -->
+    <section id="apartments" class="py-16 bg-white">
+        <div class="container mx-auto px-4 md:px-8">
+            <h2 class="text-4xl font-bold text-center mb-12 section-header animate-on-scroll">Our Luxury Apartments</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="card bg-gray-100 rounded-lg shadow-lg overflow-hidden animate-on-scroll">
+                    <!-- Replace with actual 1 Bed Apartment image -->
+                    <img src="https://raw.githubusercontent.com/yourusername/your-repo-name/main/images/1-bed-apartment.jpg" alt="Luxury 1 Bed Apartment" class="w-full h-64 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Luxury 1 Bed Apartment</h3>
+                        <p class="text-gray-700">Perfect for individuals or couples seeking a cozy and elegant retreat in the hills. Thoughtfully designed with modern finishes and breathtaking views.</p>
+                        <ul class="list-disc list-inside text-gray-600 mt-4">
+                            <li>Spacious living area</li>
+                            <li>Modern kitchen</li>
+                            <li>Balcony with scenic views</li>
+                            <li>High-quality finishes</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card bg-gray-100 rounded-lg shadow-lg overflow-hidden animate-on-scroll">
+                    <!-- Replace with actual 2 Bed Apartment image -->
+                    <img src="https://raw.githubusercontent.com/yourusername/your-repo-name/main/images/2-bed-apartment.jpg" alt="Luxury 2 Bed Apartment" class="w-full h-64 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Luxury 2 Bed Apartment</h3>
+                        <p class="text-gray-700">Ideal for families or those desiring extra space. Enjoy expansive living areas and two comfortable bedrooms, all with stunning views.</p>
+                        <ul class="list-disc list-inside text-gray-600 mt-4">
+                            <li>Two spacious bedrooms</li>
+                            <li>Separate living and dining areas</li>
+                            <li>Multiple balconies</li>
+                            <li>Premium amenities</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Parallax Section 1 -->
+    <section class="parallax-bg parallax-1">
+        <h2 class="text-5xl font-extrabold text-center">Your Dream Home Awaits</h2>
+    </section>
+
+    <!-- Amenities Section -->
+    <section id="amenities" class="py-16 bg-gray-100">
+        <div class="container mx-auto px-4 md:px-8">
+            <h2 class="text-4xl font-bold text-center mb-12 section-header animate-on-scroll">World-Class Amenities</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 text-center">
+                <div class="amenity-item bg-white p-6 rounded-lg shadow-md card animate-on-scroll">
+                    <!-- Replace with actual Cafe image/icon -->
+                    <img src="https://raw.githubusercontent.com/yourusername/your-repo-name/main/images/cafe-icon.png" alt="Cafe Icon" class="amenity-icon mx-auto">
+                    <h3 class="text-xl font-semibold text-gray-800">Cafe</h3>
+                    <p class="text-gray-600">Enjoy freshly brewed coffee and delicious snacks in our cozy cafe.</p>
+                </div>
+                <div class="amenity-item bg-white p-6 rounded-lg shadow-md card animate-on-scroll">
+                    <!-- Replace with actual Fitness Centre image/icon -->
+                    <img src="https://raw.githubusercontent.com/yourusername/your-repo-name/main/images/fitness-icon.png" alt="Fitness Icon" class="amenity-icon mx-auto">
+                    <h3 class="text-xl font-semibold text-gray-800">Fitness Centre</h3>
+                    <p class="text-gray-600">State-of-the-art gym facilities to keep you active and healthy.</p>
+                </div>
+                <div class="amenity-item bg-white p-6 rounded-lg shadow-md card animate-on-scroll">
+                    <!-- Replace with actual Elevator image/icon -->
+                    <img src="https://raw.githubusercontent.com/yourusername/your-repo-name/main/images/elevator.jpg" alt="Elevator Icon" class="amenity-icon mx-auto">
+                    <h3 class="text-xl font-semibold text-gray-800">High-Speed Elevators</h3>
+                    <p class="text-gray-600">Fast and reliable elevators for convenient access to all floors.</p>
+                </div>
+                <div class="amenity-item bg-white p-6 rounded-lg shadow-md card animate-on-scroll">
+                    <!-- Replace with actual Parking image/icon -->
+                    <img src="https://raw.githubusercontent.com/yourusername/your-repo-name/main/images/parking.jpg" alt="Parking Icon" class="amenity-icon mx-auto">
+                    <h3 class="text-xl font-semibold text-gray-800">Ample Parking</h3>
+                    <p class="text-gray-600">Secure and spacious parking facilities for residents and guests.</p>
+                </div>
+                <div class="amenity-item bg-white p-6 rounded-lg shadow-md card animate-on-scroll">
+                    <!-- Replace with actual Balcony image/icon -->
+                    <img src="https://raw.githubusercontent.com/yourusername/your-repo-name/main/images/balcony.jpg" alt="Balcony Icon" class="amenity-icon mx-auto">
+                    <h3 class="text-xl font-semibold text-gray-800">Private Balconies</h3>
+                    <p class="text-gray-600">Enjoy stunning panoramic views from your private balcony.</p>
+                </div>
+                <div class="amenity-item bg-white p-6 rounded-lg shadow-md card animate-on-scroll">
+                    <!-- Replace with actual Security image/icon -->
+                    <img src="https://raw.githubusercontent.com/yourusername/your-repo-name/main/images/security.jpg" alt="Security Icon" class="amenity-icon mx-auto">
+                    <h3 class="text-xl font-semibold text-gray-800">24/7 Security</h3>
+                    <p class="text-gray-600">Round-the-clock security for a safe and peaceful living environment.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Parallax Section 2 -->
+    <section class="parallax-bg parallax-2">
+        <h2 class="text-5xl font-extrabold text-center">Experience Serenity and Comfort</h2>
+    </section>
+
+    <!-- Payment Plan Section -->
+    <section id="payment-plan" class="py-16 bg-white">
+        <div class="container mx-auto px-4 md:px-8">
+            <h2 class="text-4xl font-bold text-center mb-12 section-header animate-on-scroll">Flexible Payment Plan</h2>
+            <div class="overflow-x-auto animate-on-scroll">
+                <table class="min-w-full bg-white rounded-lg shadow-lg payment-table">
+                    <thead>
+                        <tr>
+                            <th class="py-3 px-4 uppercase font-semibold text-sm text-gray-600">Milestone</th>
+                            <th class="py-3 px-4 uppercase font-semibold text-sm text-gray-600 text-right">Amount (PKR)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="py-3 px-4">Booking</td>
+                            <td class="py-3 px-4 text-right">1,000,000</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-4">Confirmation</td>
+                            <td class="py-3 px-4 text-right">1,000,000</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-4">36 Monthly Installments</td>
+                            <td class="py-3 px-4 text-right">100,000</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-4">6 Half Yearly</td>
+                            <td class="py-3 px-4 text-right">550,000</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-4">Grey Structure</td>
+                            <td class="py-3 px-4 text-right">1,000,000</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-4">On Possession</td>
+                            <td class="py-3 px-4 text-right">1,100,000</td>
+                        </tr>
+                        <tr class="font-bold bg-blue-50 text-blue-800">
+                            <td class="py-3 px-4">TOTAL</td>
+                            <td class="py-3 px-4 text-right">11,000,000</td>
+                        </tr>
+                        <tr class="font-bold bg-blue-100 text-blue-900">
+                            <td class="py-3 px-4" colspan="2">22,000 PER SQ FT</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-16 bg-gray-100">
+        <div class="container mx-auto px-4 md:px-8">
+            <h2 class="text-4xl font-bold text-center mb-12 section-header animate-on-scroll">Contact Us</h2>
+            <div class="flex flex-col md:flex-row justify-center items-center md:space-x-12">
+                <div class="md:w-1/2 mb-8 md:mb-0 text-center animate-on-scroll">
+                    <p class="text-lg text-gray-700 mb-4">Have questions or ready to book your dream apartment?</p>
+                    <p class="text-2xl font-bold text-blue-700 mb-2">0312-6613381</p>
+                    <p class="text-2xl font-bold text-blue-700 mb-6">0326-7788999</p>
+                    <p class="text-lg text-gray-700 mb-2">ABM Hills, Murree Expressway</p>
+                    <p class="text-lg text-gray-700">Dynamic Capital Estate Marketing</p>
+                </div>
+                <div class="md:w-1/2 text-center animate-on-scroll">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-4">Connect With Us</h3>
+                    <div class="flex justify-center space-x-6">
+                        <a href="https://facebook.com/ABMHoldings" target="_blank" class="social-icon">
+                            <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.776-3.89 1.094 0 2.24.195 2.24.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd" /></svg>
+                        </a>
+                        <a href="https://instagram.com/ABMHoldings" target="_blank" class="social-icon">
+                            <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 0C8.74 0 8.333.014 7.053.072 5.775.132 4.905.333 4.14.636c-.789.309-1.45.754-2.179 1.483-.729.73-1.174 1.39-1.483 2.179C.333 4.905.131 5.775.072 7.053.014 8.333 0 8.74 0 12s.014 3.667.072 4.947c.06 1.278.261 2.148.564 2.913.309.789.754 1.45 1.483 2.179.73.729 1.39 1.174 2.179 1.483.766.307 1.636.509 2.914.568C8.333 23.986 8.74 24 12 24s3.667-.014 4.947-.072c1.278-.06 2.148-.261 2.913-.564.789-.309 1.45-.754 2.179-1.483.729-.73 1.174-1.39 1.483-2.179.307-.766.509-1.636.568-2.914.058-1.278.072-1.684.072-4.947s-.014-3.667-.072-4.947c-.06-1.278-.261-2.148-.564-2.913-.309-.789-.754-1.45-1.483-2.179C21.368 2.333 20.708 1.888 19.919 1.58c-.766-.307-1.636-.509-2.914-.568C15.667.014 15.26 0 12 0zm0 2.16c3.2 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.424.603.246 1.058.799 1.41 1.15s.764.807 1.009 1.418c.174.422.368 1.057.423 2.227.056 1.265.07 1.65.07 4.85s-.014 3.585-.07 4.85c-.055 1.17-.249 1.805-.424 2.227-.246.603-.799 1.058-1.15 1.41s-.807.764-1.418 1.009c-.422.174-1.057.368-2.227.423-1.265.056-1.65.07-4.85.07s-3.585-.014-4.85-.07c-1.17-.055-1.805-.249-2.227-.424-.603-.246-1.058-.799-1.41-1.15s-.764-.807-1.009-1.418c-.174-.422-.368-1.057-.423-2.227-.056-1.265-.07-1.65-.07-4.85s.014-3.585.07-4.85c.055-1.17.249-1.805.424-2.227.246-.603.799-1.058 1.15-1.41s.807-.764 1.418-1.009c.422-.174 1.057-.368 2.227-.423C8.415 2.176 8.82 2.16 12 2.16zm0 3.635c-3.463 0-6.265 2.802-6.265 6.265 0 3.463 2.802 6.265 6.265 6.265 3.463 0 6.265-2.802 6.265-6.265 0-3.463-2.802-6.265-6.265-6.265zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.404c-.473 0-.86.387-.86.86s.387.86.86.86.86-.387.86-.86-.387-.86-.86-.86z" clip-rule="evenodd" /></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4 md:px-8 text-center">
+            <p>&copy; 2025 ABM Hills. All rights reserved.</p>
+            <p class="mt-2">Developed by ABM Developers</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu when a link is clicked
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Animate on scroll effect
+        const animateOnScrollElements = document.querySelectorAll('.animate-on-scroll');
+
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target); // Stop observing once visible
+                }
+            });
+        }, observerOptions);
+
+        animateOnScrollElements.forEach(element => {
+            observer.observe(element);
+        });
+
+        // Placeholder image error handling - This will now only trigger if your uploaded images fail to load
+        document.querySelectorAll('img').forEach(img => {
+            img.onerror = function() {
+                this.src = 'https://placehold.co/600x400/CCCCCC/333333?text=Image+Not+Found'; // Fallback placeholder
+                this.alt = 'Image not available';
+            };
+        });
+
+        // Three.js 3D Background Animation
+        window.onload = function() {
+            const canvas = document.getElementById('three-js-canvas');
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true }); // alpha: true for transparency
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+
+            // Create a simple geometry for the "mountains" (e.g., a distorted plane)
+            const geometry = new THREE.PlaneGeometry(200, 200, 64, 64);
+            const positions = geometry.attributes.position.array;
+
+            // Apply some random displacement to create a mountain-like terrain
+            for (let i = 0; i < positions.length; i += 3) {
+                positions[i + 2] += Math.random() * 10 - 5; // Z-axis displacement
+            }
+            geometry.attributes.position.needsUpdate = true;
+            geometry.computeVertexNormals(); // Recalculate normals for lighting
+
+            // Shader material for cloudy effect
+            const vertexShader = `
+                uniform float time;
+                varying vec2 vUv;
+                varying float vElevation;
+
+                void main() {
+                    vUv = uv;
+                    vec3 newPosition = position;
+                    // Simple wave effect for subtle movement
+                    newPosition.z += sin(newPosition.x * 0.5 + time * 0.1) * 2.0;
+                    newPosition.z += cos(newPosition.y * 0.5 + time * 0.1) * 2.0;
+                    
+                    vElevation = newPosition.z;
+
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
+                }
+            `;
+
+            const fragmentShader = `
+                uniform float time;
+                uniform vec3 color1;
+                uniform vec3 color2;
+                varying vec2 vUv;
+                varying float vElevation;
+
+                void main() {
+                    // Simple cloud-like color blending based on elevation and time
+                    vec3 color = mix(color1, color2, (vElevation + 5.0) / 10.0);
+                    
+                    // Add some subtle noise/flicker
+                    float noise = fract(sin(dot(vUv * 10.0, vec2(12.9898, 78.233))) * 43758.5453 + time * 0.5);
+                    color += noise * 0.05;
+
+                    gl_FragColor = vec4(color, 1.0);
+                }
+            `;
+
+            const material = new THREE.ShaderMaterial({
+                uniforms: {
+                    time: { value: 0.0 },
+                    // Adjusted colors for a darker, more aesthetic mountain/cloud feel
+                    color1: { value: new THREE.Color(0x283848) }, // Darker slate blue/grey
+                    color2: { value: new THREE.Color(0x1a202c) }  // Even darker, close to body background
+                },
+                vertexShader: vertexShader,
+                fragmentShader: fragmentShader,
+                transparent: true,
+                opacity: 0.8, /* Increased opacity slightly for more presence */
+                side: THREE.DoubleSide // Render both sides of the plane
+            });
+
+            const mesh = new THREE.Mesh(geometry, material);
+            scene.add(mesh);
+
+            // Position the camera
+            camera.position.z = 100;
+            camera.position.y = 20;
+            camera.rotation.x = -Math.PI / 8; // Look down slightly
+
+            // Mouse interaction for camera movement
+            let mouseX = 0, mouseY = 0;
+            let targetX = 0, targetY = 0;
+            const windowHalfX = window.innerWidth / 2;
+            const windowHalfY = window.innerHeight / 2;
+
+            document.addEventListener('mousemove', (event) => {
+                mouseX = (event.clientX - windowHalfX);
+                mouseY = (event.clientY - windowHalfY);
+            });
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+
+            // Animation loop
+            const animate = () => {
+                requestAnimationFrame(animate);
+
+                // Update uniforms for animation
+                material.uniforms.time.value += 0.005; // Slower animation for a more subtle "video" feel
+
+                // Smooth camera movement based on mouse
+                targetX = mouseX * 0.00005; // Reduced sensitivity
+                targetY = mouseY * 0.00005; // Reduced sensitivity
+                
+                mesh.rotation.y += (targetX - mesh.rotation.y) * 0.03; // Slower rotation
+                mesh.rotation.x += (targetY - mesh.rotation.x) * 0.03; // Slower rotation
+
+                renderer.render(scene, camera);
+            };
+
+            animate(); // Start the animation loop
+        };
+    </script>
+</body>
+</html>
