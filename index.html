@@ -3,883 +3,318 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Capital Estate - Your Gateway to Premium Properties</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    <!-- Three.js Library for 3D background -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <title>Interactive Internship Agreement</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Professional -->
+    <!-- Application Structure Plan: The application transforms the dense legal contract into a user-friendly, interactive experience. The structure is thematic, not linear, to prioritize comprehension. It starts with a high-level summary dashboard of key terms (duration, goal, pay status) for immediate clarity. The core of the app is a tabbed "Clause Explorer," which breaks the contract into digestible sections (Responsibilities, Policies, Performance), preventing overwhelm. A dedicated visualization section uses a Chart.js bar chart to make the abstract "5 deals" performance goal tangible and easy to grasp against the internship timeline. Finally, an interactive acknowledgement section with checkboxes and signature input ensures deliberate user consent and provides an option to send agreement via email. This structure was chosen to guide the intern through the agreement logically, from summary to detail to action, making a formal document more approachable and understandable. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Entire contract text -> Goal: Organize/Inform -> Viz/Presentation: Tabbed interface -> Interaction: Click tabs to reveal content -> Justification: Breaks down intimidating wall of text into manageable, thematic sections. Method: HTML/CSS/JS.
+        - Report Info: Key terms (Duration, Pay, Goal) -> Goal: Inform/Highlight -> Viz/Presentation: Key metric "cards" -> Interaction: Static display for quick scanning -> Justification: Provides an 'at-a-glance' summary of the most critical information upfront. Method: HTML/Tailwind.
+        - Report Info: Performance Goal (5 deals in ~30 days) -> Goal: Compare/Change -> Viz/Presentation: Bar Chart -> Interaction: Hover for tooltips (labels provide context) -> Justification: Visualizes the performance target against the time-frame, making the requirement clear and quantifiable. Library: Chart.js (Canvas).
+        - Report Info: Termination clauses -> Goal: Inform/Organize -> Viz/Presentation: Structured list with icons -> Interaction: Static display -> Justification: Uses visual cues (icons) and clear formatting to highlight serious consequences, improving readability and retention. Method: HTML/Tailwind.
+        - Report Info: Agreement signature -> Goal: Action/Confirm -> Viz/Presentation: Checkboxes, text inputs, and a button -> Interaction: User must check all boxes and fill signature to enable the button; clicking button generates mailto link -> Justification: Creates a clear, intentional action for the user, confirming they have reviewed each part of the contract and providing a digital signature option. Method: HTML/JS.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0d1117; /* Very dark background for professionalism */
-            color: #e2e8f0; /* Light text for contrast */
-            overflow-x: hidden; /* Prevent horizontal scroll */
         }
-        /* Styling for the hero section with the 3D canvas */
-        .hero-section {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: white;
-            position: relative;
-            overflow: hidden;
-            background-color: #0d1117; /* Fallback background */
-        }
-        #three-js-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0; /* Behind content */
-            opacity: 0.8; /* Increased opacity for more presence */
-        }
-        .hero-content {
-            z-index: 1; /* Above the canvas */
-            position: relative; /* Ensure it's positioned above the canvas */
-            animation: fadeInScale 1.8s ease-out forwards; /* Slower animation */
-            background: rgba(0, 0, 0, 0.6); /* Darker overlay for better text readability */
-            padding: 3rem 2.5rem; /* Increased padding */
-            border-radius: 2rem; /* More rounded corners for a premium feel */
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6); /* Stronger, deeper shadow */
-            backdrop-filter: blur(5px); /* Subtle blur effect */
-        }
-        @keyframes fadeInScale {
-            from {
-                opacity: 0;
-                transform: scale(0.85);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-        .section-header {
-            position: relative;
-            padding-bottom: 1.5rem; /* More padding */
-            margin-bottom: 3rem; /* More margin */
-            color: #f7fafc; /* Lighter color for headers */
-            font-weight: 800; /* Extra bold for impact */
-            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5); /* Subtle golden glow */
-        }
-        .section-header::after {
-            content: '';
-            position: absolute;
-            left: 50%;
-            bottom: 0;
-            transform: translateX(-50%);
-            width: 120px; /* Wider underline */
-            height: 5px; /* Thicker underline */
-            background: linear-gradient(to right, #ffd700, #ffa500); /* Golden gradient */
-            border-radius: 3px;
-        }
-        .gold-glow {
-            color: #ffd700; /* Gold color */
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.8), 0 0 20px rgba(255, 165, 0, 0.6); /* Stronger golden glow */
-            font-weight: 800;
-        }
-        .card {
-            transition: transform 0.4s ease, box-shadow 0.4s ease, background-color 0.4s ease;
-            background-color: #1a202c; /* Darker card background */
-            color: #e2e8f0; /* Light text for cards */
-            border-radius: 1rem; /* More rounded corners */
-            overflow: hidden;
-            border: 1px solid rgba(255, 215, 0, 0.2); /* Subtle golden border */
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-        .card:hover {
-            transform: translateY(-8px); /* More pronounced lift */
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 25px rgba(255, 215, 0, 0.3); /* Stronger shadow with golden glow */
-            background-color: #2d3748; /* Slightly lighter on hover */
-        }
-        .amenity-icon {
-            width: 100px;
-            height: 100px;
-            object-fit: contain;
-            margin-bottom: 1rem;
-            transition: transform 0.3s ease;
-            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.7)); /* Golden glow for icons */
-        }
-        .amenity-item:hover .amenity-icon {
-            transform: scale(1.15); /* More pronounced scale */
-        }
-        .parallax-bg {
-            background-attachment: fixed;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: cover;
-            min-height: 450px; /* Slightly taller parallax sections */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            text-shadow: 0 0 10px rgba(0, 0, 0, 0.9); /* Deeper text shadow */
-            position: relative;
-        }
-        .parallax-bg::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6); /* Darker overlay for parallax images */
-            z-index: 0;
-        }
-        .parallax-bg h2 {
-            z-index: 1; /* Ensure text is above overlay */
-            font-weight: 800; /* Extra bold */
-            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5); /* Golden glow */
-        }
-        .parallax-1 {
-            background-image: url('https://raw.githubusercontent.com/yourusername/your-repo-name/main/images/luxury-apartment-bg.jpg'); /* Replace with your image */
-        }
-        .parallax-2 {
-            background-image: url('https://raw.githubusercontent.com/yourusername/your-repo-name/main/images/murree-view-bg.jpg'); /* Replace with your image */
-        }
-        .animate-on-scroll {
-            opacity: 0;
-            transform: translateY(30px); /* More pronounced slide-up */
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out; /* Slower animation */
-        }
-        .animate-on-scroll.is-visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .payment-table {
-            background-color: #1a202c; /* Darker table background */
-            color: #e2e8f0;
-            border-radius: 1rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
-        }
-        .payment-table th, .payment-table td {
-            padding: 1rem; /* More padding */
-            text-align: left;
-            border-bottom: 1px solid #4a5568; /* Darker border */
-        }
-        .payment-table th {
-            background-color: #2d3748; /* Darker header background */
-            font-weight: 700; /* Bolder header */
-            color: #ffd700; /* Golden header text */
-        }
-        .payment-table tr:nth-child(even) {
-            background-color: #1f2937; /* Slightly different row color */
-        }
-        .payment-table tr.font-bold {
-            background-color: #4299e1; /* Accent color for total rows */
-            color: white;
-        }
-        .social-icon {
-            transition: transform 0.3s ease, color 0.3s ease;
-            color: #ffd700; /* Golden accent color for social icons */
-        }
-        .social-icon:hover {
-            transform: scale(1.3); /* More pronounced scale */
-            color: #ffe066; /* Lighter golden on hover */
-        }
-        .text-blue-700 {
-            color: #ffd700; /* Adjusting primary blue to golden accent color */
-        }
-        .bg-blue-700 {
-            background-color: #ffa500; /* Adjusting primary blue to orange-golden */
-        }
-        .hover\:bg-blue-800:hover {
-            background-color: #e68a00; /* Darker orange-golden on hover */
-        }
-        .text-pink-500 {
-            color: #fc8181; /* Adjusting pink for dark theme */
-        }
-        .hover\:text-pink-700:hover {
-            color: #e53e3e; /* Darker pink on hover */
-        }
-        /* General text color adjustments for dark theme */
-        .text-gray-800 { color: #f7fafc; }
-        .text-gray-700 { color: #e2e8f0; }
-        .text-gray-600 { color: #cbd5e0; }
-        .bg-white { background-color: #1a202c; } /* Darker white sections */
-        .bg-gray-100 { background-color: #0d1117; } /* Keeping this as the body background for consistency */
-
-        /* Specific fix for text visibility in sections with bg-gray-100 (like Contact Us) */
-        .bg-gray-100 .text-gray-700 {
-            color: #f7fafc; /* Make text almost white for better contrast on dark gray background */
-        }
-
-        /* Styling for the new project cards */
-        .project-card {
-            background-color: #1a202c;
-            border-radius: 1rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 1px solid rgba(255, 215, 0, 0.1);
-        }
-        .project-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.2);
-        }
-        .project-card h3 {
-            color: #ffd700; /* Golden title */
-            font-weight: 700;
-        }
-        .project-card ul {
-            list-style: none; /* Remove default bullet points */
-            padding-left: 0;
-        }
-        .project-card ul li::before {
-            content: "•"; /* Custom bullet point */
-            color: #ffd700; /* Golden bullet point */
-            display: inline-block;
-            width: 1em;
-            margin-left: -1em;
-        }
-
-        /* Modal Tabs Styling */
-        .modal-tabs {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-            border-bottom: 2px solid #4a5568;
-        }
-        .modal-tab-button {
-            padding: 0.75rem 1.5rem;
-            background-color: transparent;
-            color: #cbd5e0;
-            border: none;
-            border-bottom: 2px solid transparent;
+        .tab-button.active {
+            border-color: #0d9488;
+            background-color: #f0fdfa;
+            color: #134e4a;
             font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
         }
-        .modal-tab-button:hover {
-            color: #ffd700;
-            border-color: #ffd700;
-        }
-        .modal-tab-button.active {
-            color: #ffd700;
-            border-color: #ffd700;
-            background-color: #2d3748;
-            border-radius: 0.5rem 0.5rem 0 0;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 320px;
+            width: 100%;
+            max-width: 700px;
         }
     </style>
 </head>
-<body class="antialiased">
+<body class="bg-stone-50 text-slate-800">
 
-    <!-- Header & Navigation -->
-    <header class="bg-white shadow-md fixed w-full z-50 py-4">
-        <nav class="container mx-auto flex justify-between items-center px-4 md:px-8">
-            <div class="text-2xl font-extrabold gold-glow">DYNAMIC CAPITAL ESTATE</div>
-            <div class="hidden md:flex space-x-6">
-                <a href="#home" class="text-gray-600 hover:text-blue-700 transition duration-300">Home</a>
-                <a href="#about" class="text-gray-600 hover:text-blue-700 transition duration-300">About Us</a>
-                <a href="#projects" class="text-gray-600 hover:text-blue-700 transition duration-300">Our Projects</a>
-                <a href="#construction" class="text-gray-600 hover:text-blue-700 transition duration-300">Construction</a>
-                <a href="#contact" class="text-gray-600 hover:text-blue-700 transition duration-300">Contact</a>
-            </div>
-            <button id="mobile-menu-button" class="md:hidden text-gray-600 hover:text-blue-700 focus:outline-none">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-            </button>
-        </nav>
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white py-2 shadow-lg">
-            <a href="#home" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Home</a>
-            <a href="#about" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">About Us</a>
-            <a href="#projects" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Our Projects</a>
-            <a href="#construction" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Construction</a>
-            <a href="#contact" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Contact</a>
-        </div>
-    </header>
+    <div class="container mx-auto max-w-5xl p-4 sm:p-6 lg:p-8">
 
-    <!-- Hero Section -->
-    <section id="home" class="hero-section">
-        <canvas id="three-js-canvas"></canvas>
-        <div class="hero-content">
-            <h1 class="text-5xl md:text-7xl font-extrabold mb-4 leading-tight gold-glow">DYNAMIC CAPITAL ESTATE</h1>
-            <p class="text-xl md:text-2xl font-light mb-8">Your Gateway to Premium Properties</p>
-            <a href="#projects" class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105">
-                Explore Our Projects
-            </a>
-        </div>
-    </section>
+        <header class="text-center mb-10">
+            <h1 class="text-3xl sm:text-4xl font-bold text-teal-800">Interactive Internship Agreement</h1>
+            <p class="mt-2 text-lg text-slate-600">A clear guide to your internship with Shayan Irfan THE MASTERMINDS.</p>
+        </header>
 
-    <!-- About Us Section -->
-    <section id="about" class="py-16 bg-white">
-        <div class="container mx-auto px-4 md:px-8">
-            <h2 class="text-4xl font-bold text-center mb-12 section-header animate-on-scroll">About Dynamic Capital Estate</h2>
-            <div class="flex flex-col md:flex-row items-center md:space-x-12">
-                <div class="md:w-1/2 mb-8 md:mb-0 animate-on-scroll">
-                    <!-- Replace with an image representing Dynamic Capital Estate, or keep Chairman -->
-                    <img src="https://raw.githubusercontent.com/yourusername/your-repo-name/main/images/dynamic-capital-estate.jpg" alt="Dynamic Capital Estate" class="rounded-lg shadow-xl w-full h-auto object-cover">
+        <section id="overview" class="mb-12">
+            <h2 class="text-2xl font-bold text-slate-700 mb-4 border-b-2 border-teal-200 pb-2">At a Glance: Key Terms</h2>
+            <p class="text-slate-600 mb-6">This is a summary of the most important terms of your internship. Please review the detailed sections for complete information. This summary helps you quickly understand the core expectations and structure of the program.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                    <h3 class="font-bold text-teal-700 text-xl mb-2">Internship Duration</h3>
+                    <p class="text-3xl font-bold">1 Month</p>
+                    <p class="text-slate-500 mt-1">July 22, 2025 - August 22, 2025</p>
                 </div>
-                <div class="md:w-1/2 animate-on-scroll">
-                    <h3 class="text-3xl font-semibold text-gray-800 mb-4">Our Vision</h3>
-                    <p class="text-lg text-gray-700 leading-relaxed mb-4">
-                        Dynamic Capital Estate is a leading real estate marketing and development firm dedicated to connecting discerning clients with their dream properties. We specialize in offering prime residential and commercial opportunities, ensuring transparency, professionalism, and unparalleled customer service.
-                    </p>
-                    <p class="text-lg text-gray-700 leading-relaxed mb-4">
-                        With a portfolio of prestigious projects, we strive to redefine luxury living and smart investment. Our commitment is to provide secure and prosperous real estate solutions that stand the test of time.
-                    </p>
-                    <p class="text-xl font-bold text-blue-700">- Dynamic Capital Estate Marketing</p>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                    <h3 class="font-bold text-teal-700 text-xl mb-2">Compensation Model</h3>
+                    <p class="text-3xl font-bold">Unpaid</p>
+                    <p class="text-slate-500 mt-1">Commission-based rewards for performance</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                    <h3 class="font-bold text-teal-700 text-xl mb-2">Primary Goal</h3>
+                    <p class="text-3xl font-bold">5 Deals</p>
+                    <p class="text-slate-500 mt-1">To be eligible for future opportunities</p>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Our Projects Section -->
-    <section id="projects" class="py-16 bg-gray-100">
-        <div class="container mx-auto px-4 md:px-8">
-            <h2 class="text-4xl font-bold text-center mb-12 section-header animate-on-scroll">Our Premium Projects</h2>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
-
-                <!-- ABM Hills Project Card -->
-                <div class="project-card p-8 animate-on-scroll">
-                    <h3 class="text-3xl mb-4 text-center gold-glow">ABM Hills, Murree</h3>
-                    <img src="https://raw.githubusercontent.com/yourusername/your-repo-name/main/images/abm-hills-exterior.jpg" alt="ABM Hills Exterior" class="rounded-lg shadow-md w-full h-64 object-cover mb-6">
-                    <p class="text-lg text-gray-700 leading-relaxed mb-4">
-                        Discover ABM Hills, a premium project by ABM Developers where luxury living meets beautiful natural views. Located on Murree Expressway, just a 40-minute drive from Islamabad, ABM Hills offers beautifully designed 1-bed and 2-bed apartments. It's your perfect family retreat, relaxing vacation spot, or a smart investment.
-                    </p>
-                    <h4 class="text-xl font-semibold text-gray-800 mb-3">Apartment Types:</h4>
-                    <ul class="text-gray-600 mb-4">
-                        <li>Luxury 1 Bed Apartment</li>
-                        <li>Luxury 2 Bed Apartment</li>
-                    </ul>
-                    <h4 class="text-xl font-semibold text-gray-800 mb-3">Easy Installment Plans Available.</h4>
-                    <button onclick="showPaymentPlan('abm-hills')" class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-6 rounded-full transition duration-300 transform hover:scale-105">
-                        View Payment Plan
-                    </button>
-                </div>
-
-                <!-- Citi Housing Sargodha Road Faisalabad Project Card -->
-                <div class="project-card p-8 animate-on-scroll">
-                    <h3 class="text-3xl mb-4 text-center gold-glow">Citi Housing, Sargodha Road, Faisalabad</h3>
-                    <img src="https://raw.githubusercontent.com/yourusername/your-repo-name/main/images/citi-housing-faisalabad.jpg" alt="Citi Housing Faisalabad" class="rounded-lg shadow-md w-full h-64 object-cover mb-6">
-                    <p class="text-lg text-gray-700 leading-relaxed mb-4">
-                        Citi Housing is a prestigious residential community offering a modern lifestyle with world-class amenities. Located strategically on Sargodha Road, Faisalabad, it provides a serene and secure environment for families.
-                    </p>
-                    <h4 class="text-xl font-semibold text-gray-800 mb-3">Property Types Available:</h4>
-                    <ul class="text-gray-600 mb-4">
-                        <li>5 Marla Houses & Plots</li>
-                        <li>10 Marla Houses & Plots</li>
-                        <li>1 Kanal Houses & Plots</li>
-                        <li>2 Kanal Houses & Plots</li>
-                    </ul>
-                    <h4 class="text-xl font-semibold text-gray-800 mb-3">Available for Sale and Rent.</h4>
-                    <a href="https://wa.me/923267788999" target="_blank" class="inline-block bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-6 rounded-full transition duration-300 transform hover:scale-105">
-                        Inquire Now on WhatsApp
-                    </a>
-                </div>
-
-                <!-- Pearl Residencia Project Card -->
-                <div class="project-card p-8 animate-on-scroll">
-                    <h3 class="text-3xl mb-4 text-center gold-glow">Pearl Residencia, Faisalabad</h3>
-                    <img src="https://raw.githubusercontent.com/yourusername/your-repo-name/main/images/pearl-residencia-faisalabad.jpg" alt="Pearl Residencia Faisalabad" class="rounded-lg shadow-md w-full h-64 object-cover mb-6">
-                    <p class="text-lg text-gray-700 leading-relaxed mb-4">
-                        Pearl Residencia offers luxurious living spaces in the heart of Faisalabad. Designed for comfort and elegance, it's an ideal choice for those seeking a premium residential experience with modern facilities and a vibrant community.
-                    </p>
-                    <h4 class="text-xl font-semibold text-gray-800 mb-3">Payment Plans:</h4>
-                    <ul class="text-gray-600 mb-4">
-                        <li>3 Marla, 5 Marla, 7 Marla, 10 Marla, 20 Marla plots available.</li>
-                        <li>5 Year Easy Payment Plan.</li>
-                    </ul>
-                    <button onclick="showPaymentPlan('pearl-residencia')" class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-6 rounded-full transition duration-300 transform hover:scale-105">
-                        View Payment Plans
-                    </button>
-                </div>
-
+        <section id="clause-explorer" class="mb-12">
+            <h2 class="text-2xl font-bold text-slate-700 mb-4 border-b-2 border-teal-200 pb-2">Clause Explorer</h2>
+            <p class="text-slate-600 mb-6">This section breaks down the full legal agreement into key areas. Click on each tab to review the specific terms and conditions related to your role, responsibilities, and the company's policies. This interactive format is designed to make the contract easier to digest.</p>
+            <div class="flex flex-wrap border-b border-slate-300">
+                <button class="tab-button py-2 px-4 border-b-2 border-transparent transition-colors duration-300" data-tab="performance">Performance & Rewards</button>
+                <button class="tab-button py-2 px-4 border-b-2 border-transparent transition-colors duration-300" data-tab="conduct">Conduct & Policies</button>
+                <button class="tab-button py-2 px-4 border-b-2 border-transparent transition-colors duration-300" data-tab="legal">Legal & Formalities</button>
             </div>
-        </div>
-    </section>
-
-    <!-- Payment Plan Section (Modal) -->
-    <div id="payment-plan-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
-        <div class="bg-gray-800 p-8 rounded-lg shadow-xl max-w-2xl w-full m-4 relative"> <!-- Changed max-w-4xl to max-w-2xl -->
-            <button onclick="closePaymentPlanModal()" class="absolute top-4 right-4 text-white text-3xl font-bold z-20">&times;</button> <!-- Increased font size and z-index -->
-            <h2 id="payment-plan-title" class="text-3xl font-bold text-center mb-6 section-header gold-glow"></h2>
-            
-            <!-- Tabs for Pearl Residencia and ABM Hills -->
-            <div id="modal-tabs" class="modal-tabs">
-                <!-- Buttons will be injected here by JS -->
-            </div>
-            <div id="payment-plan-content" class="text-gray-200 overflow-y-auto max-h-96"> <!-- Added overflow-y-auto and max-height -->
-                <!-- Payment plan details will be injected here -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Construction Progress Section (New) -->
-    <section id="construction" class="hero-section">
-        <canvas id="construction-canvas"></canvas>
-        <div class="hero-content">
-            <h2 class="text-4xl md:text-5xl font-extrabold mb-4 leading-tight gold-glow">Construction Progress</h2>
-            <p class="text-xl md:text-2xl font-light mb-8">Witness our commitment to excellence, building your future, brick by brick.</p>
-            <p class="text-lg text-gray-200">
-                At Dynamic Capital Estate, we believe in transparency and progress. Our ongoing projects are a testament to our dedication to quality construction and timely delivery.
-                Experience the evolution of your dream property from the ground up.
-            </p>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="py-16 bg-gray-100">
-        <div class="container mx-auto px-4 md:px-8">
-            <h2 class="text-4xl font-bold text-center mb-12 section-header animate-on-scroll">Contact Dynamic Capital Estate</h2>
-            <div class="flex flex-col md:flex-row justify-center items-center md:space-x-12">
-                <div class="md:w-1/2 mb-8 md:mb-0 text-center animate-on-scroll">
-                    <p class="text-lg text-gray-700 mb-4">Have questions or ready to book your dream property?</p>
-                    <p class="text-2xl font-bold text-blue-700 mb-2">
-                        <a href="https://wa.me/923126613381" target="_blank" class="hover:underline">0312-6613381</a>
-                    </p>
-                    <p class="text-2xl font-bold text-blue-700 mb-6">
-                        <a href="https://wa.me/923267788999" target="_blank" class="hover:underline">0326-7788999</a>
-                    </p>
-                    <p class="text-lg text-gray-700 mb-2">Office: ABM Hills, Murree Expressway</p>
-                    <p class="text-lg text-gray-700">Dynamic Capital Estate Marketing</p>
+            <div class="mt-6">
+                <div id="performance" class="tab-content">
+                    <h3 class="text-xl font-semibold mb-3 text-teal-800">Performance, Goals & Rewards</h3>
+                    <div class="space-y-4 text-slate-700">
+                        <p><strong>Internship Nature:</strong> This is a conditional, unpaid internship with a performance-based opportunity for future hiring. The intern must achieve a minimum of 5 confirmed business deals during this period to be considered for a permanent or extended position.</p>
+                        <p><strong>Commission Policy:</strong> Interns will be entitled to commission for each successful deal even before being formally hired. Commission payments will be made after verification and closure of each deal, based on agreed terms. This does not guarantee employment but rewards performance during the internship period.</p>
+                        <p><strong>Performance & Conduct Goal:</strong> A minimum of 5 business deals must be completed by August 22, 2025.</p>
+                    </div>
                 </div>
-                <div class="md:w-1/2 text-center animate-on-scroll">
-                    <h3 class="text-2xl font-semibold text-gray-800 mb-4">Connect With Us</h3>
-                    <div class="flex justify-center space-x-6">
-                        <a href="https://facebook.com/ABMHoldings" target="_blank" class="social-icon">
-                            <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.776-3.89 1.094 0 2.24.195 2.24.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd" /></svg>
-                        </a>
-                        <a href="https://instagram.com/ABMHoldings" target="_blank" class="social-icon">
-                            <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 0C8.74 0 8.333.014 7.053.072 5.775.132 4.905.333 4.14.636c-.789.309-1.45.754-2.179 1.483-.729.73-1.174 1.39-1.483 2.179C.333 4.905.131 5.775.072 7.053.014 8.333 0 8.74 0 12s.014 3.667.072 4.947c.06 1.278.261 2.148.564 2.913.309.789.754 1.45 1.483 2.179.73.729 1.39 1.174 2.179 1.483.766.307 1.636.509 2.914.568C8.333 23.986 8.74 24 12 24s3.667-.014 4.947-.072c1.278-.06 2.148-.261 2.913-.564.789-.309 1.45-.754 2.179-1.483.729-.73 1.174-1.39 1.483-2.179.307-.766.509-1.636.568-2.914.058-1.278.072-1.684.072-4.947s-.014-3.667-.072-4.947c-.06-1.278-.261-2.148-.564-2.913-.309-.789-.754-1.45-1.483-2.179C21.368 2.333 20.708 1.888 19.919 1.58c-.766-.307-1.636-.509-2.914-.568C15.667.014 15.26 0 12 0zm0 2.16c3.2 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.424.603.246 1.058.799 1.41 1.15s.764.807 1.009 1.418c.174.422.368 1.057.423 2.227.056 1.265.07 1.65.07 4.85s-.014 3.585-.07 4.85c-.055 1.17-.249 1.805-.424 2.227-.246.603-.799 1.058-1.15 1.41s-.807.764-1.418 1.009c-.422.174-1.057.368-2.227.423-1.265.056-1.65.07-4.85.07s-3.585-.014-4.85-.07c-1.17-.055-1.805-.249-2.227-.424-.603-.246-1.058-.799-1.41-1.15s-.764-.807-1.009-1.418c-.174-.422-.368-1.057-.423-2.227-.056-1.265-.07-1.65-.07-4.85s.014-3.585.07-4.85c.055-1.17.249-1.805.424-2.227.246-.603.799-1.058 1.15-1.41s.807-.764 1.418-1.009c.422-.174 1.057-.368 2.227-.423C8.415 2.176 8.82 2.16 12 2.16zm0 3.635c-3.463 0-6.265 2.802-6.265 6.265 0 3.463 2.802 6.265 6.265 6.265 3.463 0 6.265-2.802 6.265-6.265 0-3.463-2.802-6.265-6.265-6.265zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.404c-.473 0-.86.387-.86.86s.387.86.86.86.86-.387.86-.86-.387-.86-.86-.86z" clip-rule="evenodd" /></svg>
-                        </a>
+                <div id="conduct" class="tab-content hidden">
+                    <h3 class="text-xl font-semibold mb-3 text-teal-800">Professional Conduct & Company Policies</h3>
+                    <div class="space-y-4 text-slate-700">
+                        <p><strong>Confidentiality & Non-Disclosure:</strong> The intern shall not discuss or leak any internal discussions, communications, strategies, or client information, during or after the internship. Breach of confidentiality will result in immediate termination and may lead to legal consequences.</p>
+                        <p><strong>Intellectual Property:</strong> All data, contacts, materials, content, and strategies created or accessed during the internship are the sole property of Shayan Irfan. The intern shall not reuse, distribute, or claim ownership over any such material after departure.</p>
+                        <p><strong>General Conduct:</strong> The intern must maintain professional conduct, daily check-ins, and responsiveness. Failure to perform or inappropriate behavior may result in immediate dismissal.</p>
+                    </div>
+                </div>
+                <div id="legal" class="tab-content hidden">
+                     <h3 class="text-xl font-semibold mb-3 text-teal-800">Legal Terms & Conditions</h3>
+                    <div class="space-y-4 text-slate-700">
+                        <p><strong>Termination Clause:</strong> This contract can be terminated without notice if the intern violates any confidentiality terms, shows negligence, misconduct, or fails to perform, or engages in any behavior that negatively impacts the company.</p>
+                        <p><strong>No Employment Guarantee:</strong> This agreement does not guarantee permanent hiring. Selection for employment depends on final evaluation and performance-based eligibility.</p>
+                        <p><strong>Parties to the Agreement:</strong> This Internship Agreement ("Agreement") is made and entered into on this 22nd day of July, 2025, by and between Shayan Irfan THE MASTERMINDS, and the Intern.</p>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-8">
-        <div class="container mx-auto px-4 md:px-8 text-center">
-            <p>&copy; 2025 Dynamic Capital Estate. All rights reserved.</p>
-            <p class="mt-2">Promoting excellence in Real Estate.</p>
-        </div>
-    </footer>
+        <section id="goal-visualization" class="mb-12">
+            <h2 class="text-2xl font-bold text-slate-700 mb-4 border-b-2 border-teal-200 pb-2">Internship Goal Visualization</h2>
+            <p class="text-slate-600 mb-6">To help you visualize your goal, this chart illustrates the target of securing 5 business deals within the one-month internship period. This is the primary metric for being considered for future roles.</p>
+            <div class="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-slate-200">
+                <div class="chart-container">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+        </section>
+        
+        <section id="termination-conditions" class="mb-12">
+            <h2 class="text-2xl font-bold text-slate-700 mb-4 border-b-2 border-teal-200 pb-2">Grounds for Immediate Termination</h2>
+            <p class="text-slate-600 mb-6">It is critical to understand the actions that could lead to the immediate termination of this agreement. The following points are grounds for dismissal without notice. Upholding these standards is essential for a successful internship.</p>
+            <div class="space-y-4">
+                <div class="flex items-start bg-red-50 border border-red-200 rounded-lg p-4">
+                    <span class="text-2xl mr-4 text-red-600">&#128274;</span>
+                    <div>
+                        <h4 class="font-bold text-red-800">Confidentiality Breach</h4>
+                        <p class="text-red-700">Leaking any internal discussions, strategies, or client information.</p>
+                    </div>
+                </div>
+                <div class="flex items-start bg-red-50 border border-red-200 rounded-lg p-4">
+                     <span class="text-2xl mr-4 text-red-600">&#128172;</span>
+                     <div>
+                        <h4 class="font-bold text-red-800">Misconduct or Negligence</h4>
+                        <p class="text-red-700">Failure to perform duties, unprofessional behavior, or lack of responsiveness.</p>
+                    </div>
+                </div>
+                <div class="flex items-start bg-red-50 border border-red-200 rounded-lg p-4">
+                    <span class="text-2xl mr-4 text-red-600">&#128078;</span>
+                     <div>
+                        <h4 class="font-bold text-red-800">Negative Impact</h4>
+                        <p class="text-red-700">Engaging in any activity that reflects poorly on the company.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="acknowledgement">
+            <h2 class="text-2xl font-bold text-slate-700 mb-4 border-b-2 border-teal-200 pb-2">Acknowledgement and Agreement</h2>
+            <p class="text-slate-600 mb-6">Please fill in your details and then carefully read and check each box to confirm you understand and agree to the terms. Clicking "Agree and Finalize" will serve as your electronic signature and send a confirmation email.</p>
+
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                <div class="space-y-4 mb-6">
+                    <div>
+                        <label for="intern-name" class="font-semibold text-slate-700 block mb-1">Intern Name:</label>
+                        <input type="text" id="intern-name" class="w-full p-2 border border-slate-300 rounded-md focus:ring-teal-500 focus:border-teal-500" placeholder="Your Full Name">
+                    </div>
+                    <div>
+                        <label for="intern-cnic" class="font-semibold text-slate-700 block mb-1">CNIC/ID Number:</label>
+                        <input type="text" id="intern-cnic" class="w-full p-2 border border-slate-300 rounded-md focus:ring-teal-500 focus:border-teal-500" placeholder="Your CNIC or ID Number">
+                    </div>
+                    <div>
+                        <label for="intern-signature" class="font-semibold text-slate-700 block mb-1">Your Signature (Type your full name):</label>
+                        <input type="text" id="intern-signature" class="w-full p-2 border border-slate-300 rounded-md focus:ring-teal-500 focus:border-teal-500" placeholder="Type your name to sign">
+                    </div>
+                </div>
+                
+                <div class="space-y-4 mb-6">
+                    <label class="flex items-center">
+                        <input type="checkbox" class="h-4 w-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500 agreement-checkbox">
+                        <span class="ml-2 text-slate-700">I have read and agree to the Term of Internship and its conditional, unpaid nature.</span>
+                    </label>
+                     <label class="flex items-center">
+                        <input type="checkbox" class="h-4 w-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500 agreement-checkbox">
+                        <span class="ml-2 text-slate-700">I understand the performance goal and the commission-based reward policy.</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" class="h-4 w-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500 agreement-checkbox">
+                        <span class="ml-2 text-slate-700">I agree to the Confidentiality, Non-Disclosure, and Intellectual Property terms.</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" class="h-4 w-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500 agreement-checkbox">
+                        <span class="ml-2 text-slate-700">I acknowledge the grounds for termination and that this agreement is not a guarantee of employment.</span>
+                    </label>
+                </div>
+
+                <button id="agree-button" class="w-full bg-teal-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:bg-slate-400 disabled:cursor-not-allowed transition-colors duration-300" disabled>
+                    Agree and Finalize Contract
+                </button>
+                 <p id="agreement-message" class="text-center mt-4 text-green-700 font-semibold hidden">Thank you for agreeing to the terms! Please check your email client to send the confirmation.</p>
+            </div>
+        </section>
+
+    </div>
 
     <script>
-        // Mobile menu toggle
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('.tab-button');
+            const contents = document.querySelectorAll('.tab-content');
 
-        mobileMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(item => item.classList.remove('active'));
+                    tab.classList.add('active');
 
-        // Close mobile menu when a link is clicked
-        mobileMenu.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                mobileMenu.classList.add('hidden');
-            });
-        });
-
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
+                    contents.forEach(content => {
+                        content.classList.add('hidden');
+                    });
+                    document.getElementById(tab.dataset.tab).classList.remove('hidden');
                 });
             });
-        });
+            tabs[0].click();
 
-        // Animate on scroll effect
-        const animateOnScrollElements = document.querySelectorAll('.animate-on-scroll');
-
-        const observerOptions = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.1
-        };
-
-        const observer = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('is-visible');
-                    observer.unobserve(entry.target); // Stop observing once visible
-                }
-            });
-        }, observerOptions);
-
-        animateOnScrollElements.forEach(element => {
-            observer.observe(element);
-        });
-
-        // Placeholder image error handling - This will now only trigger if your uploaded images fail to load
-        document.querySelectorAll('img').forEach(img => {
-            img.onerror = function() {
-                this.src = 'https://placehold.co/600x400/CCCCCC/333333?text=Image+Not+Found'; // Fallback placeholder
-                this.alt = 'Image not available';
-            };
-        });
-
-        // Three.js 3D Background Animation (Hero Section)
-        window.onload = function () {
-            const canvas = document.getElementById('three-js-canvas');
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
-
-            const geometry = new THREE.PlaneGeometry(300, 300, 128, 128);
-            const positions = geometry.attributes.position.array;
-
-            for (let i = 0; i < positions.length; i += 3) {
-                positions[i + 2] += (Math.random() * 2 - 1) * 20;
-                positions[i + 2] += Math.sin(positions[i] * 0.05) * 5;
-                positions[i + 2] += Math.cos(positions[i+1] * 0.05) * 5;
-            }
-            geometry.attributes.position.needsUpdate = true;
-            geometry.computeVertexNormals();
-
-            const vertexShader = `
-                uniform float time;
-                varying vec2 vUv;
-                varying float vElevation;
-
-                void main() {
-                    vUv = uv;
-                    vec3 newPosition = position;
-                    newPosition.z += sin(newPosition.x * 0.02 + time * 0.005) * 1.5;
-                    newPosition.z += cos(newPosition.y * 0.02 + time * 0.005) * 1.5;
-                    
-                    vElevation = newPosition.z;
-
-                    gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
-                }
-            `;
-
-            const fragmentShader = `
-                uniform float time;
-                uniform vec3 color1;
-                uniform vec3 color2;
-                varying vec2 vUv;
-                varying float vElevation;
-
-                void main() {
-                    vec3 color = mix(color1, color2, (vElevation + 20.0) / 40.0);
-                    float noise = fract(sin(dot(vUv * 20.0, vec2(12.9898, 78.233))) * 43758.5453 + time * 0.1);
-                    color += noise * 0.03;
-
-                    gl_FragColor = vec4(color, 1.0);
-                }
-            `;
-
-            const material = new THREE.ShaderMaterial({
-                uniforms: {
-                    time: { value: 0.0 },
-                    color1: { value: new THREE.Color(0x1a202c) },
-                    color2: { value: new THREE.Color(0x0d1117) }
+            const ctx = document.getElementById('performanceChart').getContext('2d');
+            const performanceChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Internship Period (1 Month)'],
+                    datasets: [{
+                        label: 'Your Current Progress',
+                        data: [0],
+                        backgroundColor: 'rgba(15, 118, 110, 0.6)',
+                        borderColor: 'rgba(13, 94, 88, 1)',
+                        borderWidth: 1,
+                        barPercentage: 0.4
+                    }]
                 },
-                vertexShader: vertexShader,
-                fragmentShader: fragmentShader,
-                transparent: true,
-                opacity: 0.9,
-                side: THREE.DoubleSide
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 6,
+                            title: {
+                                display: true,
+                                text: 'Confirmed Business Deals'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: false
+                        },
+                         annotation: {
+                            annotations: {
+                                line1: {
+                                    type: 'line',
+                                    yMin: 5,
+                                    yMax: 5,
+                                    borderColor: 'rgb(220, 38, 38)',
+                                    borderWidth: 2,
+                                    borderDash: [6, 6],
+                                    label: {
+                                        content: 'Target: 5 Deals',
+                                        enabled: true,
+                                        position: 'end',
+                                        backgroundColor: 'rgba(220, 38, 38, 0.8)',
+                                        font: {
+                                          weight: 'bold'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             });
-
-            const mesh = new THREE.Mesh(geometry, material);
-            scene.add(mesh);
-
-            camera.position.z = 150;
-            camera.position.y = 50;
-            camera.rotation.x = -Math.PI / 6;
-
-            let mouseX = 0, mouseY = 0;
-            let targetX = 0, targetY = 0;
-            const windowHalfX = window.innerWidth / 2;
-            const windowHalfY = window.innerHeight / 2;
-
-            document.addEventListener('mousemove', (event) => {
-                mouseX = (event.clientX - windowHalfX);
-                mouseY = (event.clientY - windowHalfY);
-            });
-
-            window.addEventListener('resize', () => {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
-            });
-
-            const animate = () => {
-                requestAnimationFrame(animate);
-                material.uniforms.time.value += 0.002;
-                targetX = mouseX * 0.00003;
-                targetY = mouseY * 0.00003;
-                mesh.rotation.y += (targetX - mesh.rotation.y) * 0.02;
-                mesh.rotation.x += (targetY - mesh.rotation.x) * 0.02;
-                renderer.render(scene, camera);
-            };
-
-            animate();
-        };
-
-        // Three.js 3D Background Animation (Construction Section)
-        window.addEventListener('load', function() {
-            const canvas = document.getElementById('construction-canvas');
-            if (!canvas) return; // Exit if canvas doesn't exist
-
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-            renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
-
-            // Add simple building blocks (cubes)
-            const cubeGeometry = new THREE.BoxGeometry(10, 10, 10);
-            const cubeMaterial = new THREE.MeshPhongMaterial({ color: 0x888888, flatShading: true }); // Grey for concrete/steel
-
-            for (let i = 0; i < 50; i++) {
-                const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-                cube.position.x = (Math.random() - 0.5) * 150;
-                cube.position.y = (Math.random() - 0.5) * 50;
-                cube.position.z = (Math.random() - 0.5) * 150;
-                cube.rotation.x = Math.random() * Math.PI;
-                cube.rotation.y = Math.random() * Math.PI;
-                scene.add(cube);
-            }
-
-            // Add a ground plane
-            const groundGeometry = new THREE.PlaneGeometry(300, 300);
-            const groundMaterial = new THREE.MeshPhongMaterial({ color: 0x555555, side: THREE.DoubleSide });
-            const ground = new THREE.Mesh(groundGeometry, groundMaterial);
-            ground.rotation.x = -Math.PI / 2;
-            ground.position.y = -30;
-            scene.add(ground);
-
-            // Add ambient light
-            const ambientLight = new THREE.AmbientLight(0x404040); // Soft white light
-            scene.add(ambientLight);
-
-            // Add directional light (like sunlight)
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            directionalLight.position.set(100, 100, 50);
-            scene.add(directionalLight);
-
-            camera.position.set(0, 50, 100);
-            camera.lookAt(0, 0, 0);
-
-            // Mouse interaction for camera movement
-            let mouseX = 0, mouseY = 0;
-            let targetX = 0, targetY = 0;
-            const windowHalfX = window.innerWidth / 2;
-            const windowHalfY = window.innerHeight / 2;
-
-            canvas.addEventListener('mousemove', (event) => {
-                mouseX = (event.clientX - windowHalfX);
-                mouseY = (event.clientY - windowHalfY);
-            });
-
-            window.addEventListener('resize', () => {
-                const width = canvas.clientWidth;
-                const height = canvas.clientHeight;
-                camera.aspect = width / height;
-                camera.updateProjectionMatrix();
-                renderer.setSize(width, height);
-            });
-
-            const animateConstruction = () => {
-                requestAnimationFrame(animateConstruction);
-
-                // Rotate the scene slightly to show dynamic construction
-                scene.rotation.y += 0.001;
-
-                targetX = mouseX * 0.00005;
-                targetY = mouseY * 0.00005;
-                
-                camera.position.x += (targetX - camera.position.x) * 0.05;
-                camera.position.y += (-targetY - camera.position.y + 50) * 0.05; // Keep camera higher
-                camera.lookAt(scene.position);
-
-                renderer.render(scene, camera);
-            };
-
-            animateConstruction();
-        });
-
-
-        // Function to show payment plan modal
-        function showPaymentPlan(project) {
-            const modal = document.getElementById('payment-plan-modal');
-            const title = document.getElementById('payment-plan-title');
-            const content = document.getElementById('payment-plan-content');
-            const modalTabs = document.getElementById('modal-tabs');
             
-            // Clear previous content and tabs
-            content.innerHTML = '';
-            modalTabs.innerHTML = '';
+            const checkboxes = document.querySelectorAll('.agreement-checkbox');
+            const internNameInput = document.getElementById('intern-name');
+            const internCnicInput = document.getElementById('intern-cnic');
+            const internSignatureInput = document.getElementById('intern-signature');
+            const agreeButton = document.getElementById('agree-button');
+            const agreementMessage = document.getElementById('agreement-message');
 
-            if (project === 'citi-housing') {
-                // Redirect directly to WhatsApp for Citi Housing
-                window.open('https://wa.me/923267788999', '_blank');
-                return; // Exit function as we are redirecting
+            function checkAgreement() {
+                const allCheckboxesChecked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+                const signatureFilled = internSignatureInput.value.trim() !== '';
+                agreeButton.disabled = !(allCheckboxesChecked && signatureFilled);
             }
 
-            modal.classList.remove('hidden');
-
-            let planData = {};
-
-            if (project === 'abm-hills') {
-                title.textContent = 'ABM Hills Payment Plan';
-                planData = {
-                    '1-Bed Apartment': `
-                        <p class="text-lg text-gray-700 mb-4">Easy Installment Plan for Luxury 1-Bed Apartments:</p>
-                        <table class="min-w-full bg-gray-700 rounded-lg shadow-lg payment-table">
-                            <thead>
-                                <tr>
-                                    <th class="py-3 px-4 uppercase font-semibold text-sm text-gray-600">Milestone</th>
-                                    <th class="py-3 px-4 uppercase font-semibold text-sm text-gray-600 text-right">Amount (PKR)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr><td class="py-3 px-4">Booking</td><td class="py-3 px-4 text-right">1,000,000</td></tr>
-                                <tr><td class="py-3 px-4">Confirmation</td><td class="py-3 px-4 text-right">1,000,000</td></tr>
-                                <tr><td class="py-3 px-4">36 Monthly Installments</td><td class="py-3 px-4 text-right">100,000</td></tr>
-                                <tr><td class="py-3 px-4">6 Half Yearly</td><td class="py-3 px-4 text-right">550,000</td></tr>
-                                <tr><td class="py-3 px-4">Grey Structure</td><td class="py-3 px-4 text-right">1,000,000</td></tr>
-                                <tr><td class="py-3 px-4">On Possession</td><td class="py-3 px-4 text-right">1,100,000</td></tr>
-                                <tr class="font-bold bg-blue-50 text-blue-800"><td class="py-3 px-4">TOTAL</td><td class="py-3 px-4 text-right">11,000,000</td></tr>
-                                <tr class="font-bold bg-blue-100 text-blue-900"><td class="py-3 px-4" colspan="2">22,000 PER SQ FT</td></tr>
-                            </tbody>
-                        </table>
-                    `,
-                    '2-Bed Apartment': `
-                        <p class="text-lg text-gray-700 mb-4">Easy Installment Plan for Luxury 2-Bed Apartments:</p>
-                        <table class="min-w-full bg-gray-700 rounded-lg shadow-lg payment-table">
-                            <thead>
-                                <tr>
-                                    <th class="py-3 px-4 uppercase font-semibold text-sm text-gray-600">Milestone</th>
-                                    <th class="py-3 px-4 uppercase font-semibold text-sm text-gray-600 text-right">Amount (PKR)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr><td class="py-3 px-4">Booking</td><td class="py-3 px-4 text-right">1,500,000</td></tr>
-                                <tr><td class="py-3 px-4">Confirmation</td><td class="py-3 px-4 text-right">1,500,000</td></tr>
-                                <tr><td class="py-3 px-4">36 Monthly Installments</td><td class="py-3 px-4 text-right">150,000</td></tr>
-                                <tr><td class="py-3 px-4">6 Half Yearly</td><td class="py-3 px-4 text-right">800,000</td></tr>
-                                <tr><td class="py-3 px-4">Grey Structure</td><td class="py-3 px-4 text-right">1,500,000</td></tr>
-                                <tr><td class="py-3 px-4">On Possession</td><td class="py-3 px-4 text-right">1,800,000</td></tr>
-                                <tr class="font-bold bg-blue-50 text-blue-800"><td class="py-3 px-4">TOTAL</td><td class="py-3 px-4 text-right">16,100,000</td></tr>
-                                <tr class="font-bold bg-blue-100 text-blue-900"><td class="py-3 px-4" colspan="2">22,000 PER SQ FT</td></tr>
-                            </tbody>
-                        </table>
-                    `
-                };
-            } else if (project === 'pearl-residencia') {
-                title.textContent = 'Pearl Residencia Payment Plans';
-                planData = {
-                    '3 Marla': `
-                        <h4 class="text-xl font-semibold text-gray-800 mb-3">3 Marla Plot - 5 Year Easy Payment Plan</h4>
-                        <table class="min-w-full payment-table">
-                            <tbody>
-                                <tr><td class="py-2 px-3">15% Booking</td><td class="py-2 px-3 text-right">295,000</td></tr>
-                                <tr><td class="py-2 px-3">After 60 Days</td><td class="py-2 px-3 text-right">195,000</td></tr>
-                                <tr><td class="py-2 px-3">60 x Monthly</td><td class="py-2 px-3 text-right">15,000</td></tr>
-                                <tr><td class="py-2 px-3">10 x Half Yearly</td><td class="py-2 px-3 text-right">36,500</td></tr>
-                                <tr><td class="py-2 px-3">On Possession</td><td class="py-2 px-3 text-right">195,000</td></tr>
-                                <tr class="font-bold bg-blue-50 text-blue-800"><td class="py-2 px-3">TOTAL PRICE</td><td class="py-2 px-3 text-right">1,950,000</td></tr>
-                            </tbody>
-                        </table>
-                    `,
-                    '5 Marla': `
-                        <h4 class="text-xl font-semibold text-gray-800 mb-3">5 Marla Plot - 5 Year Easy Payment Plan</h4>
-                        <table class="min-w-full payment-table">
-                            <tbody>
-                                <tr><td class="py-2 px-3">15% Booking</td><td class="py-2 px-3 text-right">490,000</td></tr>
-                                <tr><td class="py-2 px-3">After 60 Days</td><td class="py-2 px-3 text-right">325,000</td></tr>
-                                <tr><td class="py-2 px-3">60 x Monthly</td><td class="py-2 px-3 text-right">25,000</td></tr>
-                                <tr><td class="py-2 px-3">10 x Half Yearly</td><td class="py-2 px-3 text-right">61,000</td></tr>
-                                <tr><td class="py-2 px-3">On Possession</td><td class="py-2 px-3 text-right">325,000</td></tr>
-                                <tr class="font-bold bg-blue-50 text-blue-800"><td class="py-2 px-3">TOTAL PRICE</td><td class="py-2 px-3 text-right">3,250,000</td></tr>
-                            </tbody>
-                        </table>
-                    `,
-                    '7 Marla': `
-                        <h4 class="text-xl font-semibold text-gray-800 mb-3">7 Marla Plot - 5 Year Easy Payment Plan</h4>
-                        <table class="min-w-full payment-table">
-                            <tbody>
-                                <tr><td class="py-2 px-3">15% Booking</td><td class="py-2 px-3 text-right">685,000</td></tr>
-                                <tr><td class="py-2 px-3">After 60 Days</td><td class="py-2 px-3 text-right">455,000</td></tr>
-                                <tr><td class="py-2 px-3">60 x Monthly</td><td class="py-2 px-3 text-right">35,000</td></tr>
-                                <tr><td class="py-2 px-3">10 x Half Yearly</td><td class="py-2 px-3 text-right">85,500</td></tr>
-                                <tr><td class="py-2 px-3">On Possession</td><td class="py-2 px-3 text-right">455,000</td></tr>
-                                <tr class="font-bold bg-blue-50 text-blue-800"><td class="py-2 px-3">TOTAL PRICE</td><td class="py-2 px-3 text-right">4,550,000</td></tr>
-                            </tbody>
-                        </table>
-                    `,
-                    '10 Marla': `
-                        <h4 class="text-xl font-semibold text-gray-800 mb-3">10 Marla Plot - 5 Year Easy Payment Plan</h4>
-                        <table class="min-w-full payment-table">
-                            <tbody>
-                                <tr><td class="py-2 px-3">15% Booking</td><td class="py-2 px-3 text-right">975,000</td></tr>
-                                <tr><td class="py-2 px-3">After 60 Days</td><td class="py-2 px-3 text-right">650,000</td></tr>
-                                <tr><td class="py-2 px-3">60 x Monthly</td><td class="py-2 px-3 text-right">50,000</td></tr>
-                                <tr><td class="py-2 px-3">10 x Half Yearly</td><td class="py-2 px-3 text-right">122,500</td></tr>
-                                <tr><td class="py-2 px-3">On Possession</td><td class="py-2 px-3 text-right">650,000</td></tr>
-                                <tr class="font-bold bg-blue-50 text-blue-800"><td class="py-2 px-3">TOTAL PRICE</td><td class="py-2 px-3 text-right">6,500,000</td></tr>
-                            </tbody>
-                        </table>
-                    `,
-                    '20 Marla': `
-                        <h4 class="text-xl font-semibold text-gray-800 mb-3">20 Marla Plot - 5 Year Easy Payment Plan</h4>
-                        <table class="min-w-full payment-table">
-                            <tbody>
-                                <tr><td class="py-2 px-3">15% Booking</td><td class="py-2 px-3 text-right">1,950,000</td></tr>
-                                <tr><td class="py-2 px-3">After 60 Days</td><td class="py-2 px-3 text-right">1,300,000</td></tr>
-                                <tr><td class="py-2 px-3">60 x Monthly</td><td class="py-2 px-3 text-right">100,000</td></tr>
-                                <tr><td class="py-2 px-3">10 x Half Yearly</td><td class="py-2 px-3 text-right">245,000</td></tr>
-                                <tr><td class="py-2 px-3">On Possession</td><td class="py-2 px-3 text-right">1,300,000</td></tr>
-                                <tr class="font-bold bg-blue-50 text-blue-800"><td class="py-2 px-3">TOTAL PRICE</td><td class="py-2 px-3 text-right">13,000,000</td></tr>
-                                
-                            </tbody>
-                        </table>
-                    `
-                };
-            }
-
-            // Create tabs
-            Object.keys(planData).forEach((key, index) => {
-                const button = document.createElement('button');
-                button.textContent = key;
-                button.classList.add('modal-tab-button');
-                button.onclick = () => showTab(key, planData, content, modalTabs);
-                modalTabs.appendChild(button);
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', checkAgreement);
             });
 
-            // Show the first tab by default
-            if (Object.keys(planData).length > 0) {
-                showTab(Object.keys(planData)[0], planData, content, modalTabs);
-            }
-        }
+            internNameInput.addEventListener('input', checkAgreement);
+            internCnicInput.addEventListener('input', checkAgreement);
+            internSignatureInput.addEventListener('input', checkAgreement);
+            
+            agreeButton.addEventListener('click', () => {
+                if(!agreeButton.disabled) {
+                    const internName = internNameInput.value.trim();
+                    const internCnic = internCnicInput.value.trim();
+                    const internSignature = internSignatureInput.value.trim();
 
-        function showTab(tabName, planData, contentElement, tabsContainer) {
-            // Deactivate all tab buttons
-            Array.from(tabsContainer.children).forEach(button => {
-                button.classList.remove('active');
+                    const subject = encodeURIComponent(`Internship Agreement Confirmation - ${internName}`);
+                    const body = encodeURIComponent(
+                        `Dear Shayan Irfan THE MASTERMINDS,\n\n` +
+                        `I, ${internName},\n` +
+                        `CNIC/ID Number: ${internCnic},\n` +
+                        `hereby confirm my agreement to the terms and conditions of the Internship Agreement, as acknowledged and signed electronically.\n\n` +
+                        `Electronic Signature: ${internSignature}\n` +
+                        `Date: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}\n\n` +
+                        `Thank you.`
+                    );
+                    
+                    window.open(`mailto:shayanindustry007@gmail.com?subject=${subject}&body=${body}`, '_blank');
+
+                    agreementMessage.classList.remove('hidden');
+                    agreeButton.classList.add('hidden');
+                }
             });
 
-            // Activate the clicked tab button
-            const activeTabButton = Array.from(tabsContainer.children).find(button => button.textContent === tabName);
-            if (activeTabButton) {
-                activeTabButton.classList.add('active');
-            }
-
-            // Update content
-            contentElement.innerHTML = planData[tabName];
-        }
-
-
-        function closePaymentPlanModal() {
-            document.getElementById('payment-plan-modal').classList.add('hidden');
-        }
+        });
     </script>
+     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0/dist/chartjs-plugin-annotation.min.js"></script>
 </body>
 </html>
