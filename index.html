@@ -6,27 +6,39 @@
     <title>Interactive Internship Agreement</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Calm Professional -->
-    <!-- Application Structure Plan: The application transforms the dense legal contract into a user-friendly, interactive experience. The structure is thematic, not linear, to prioritize comprehension. It starts with a high-level summary dashboard of key terms (duration, goal, pay status) for immediate clarity. The core of the app is a tabbed "Clause Explorer," which breaks the contract into digestible sections (Responsibilities, Policies, Performance), preventing overwhelm. A dedicated visualization section uses a Chart.js bar chart to make the abstract "5 deals" performance goal tangible and easy to grasp against the internship timeline. Finally, an interactive acknowledgement section with checkboxes and signature input ensures deliberate user consent and provides an option to send agreement via email. This structure was chosen to guide the intern through the agreement logically, from summary to detail to action, making a formal document more approachable and understandable. -->
+    <!-- Chosen Palette: Dark Professional with Purple Fade -->
+    <!-- Application Structure Plan: The application transforms the dense legal contract into a user-friendly, interactive experience. The structure is thematic, not linear, to prioritize comprehension. It starts with a high-level summary dashboard of key terms (duration, goal, pay status) for immediate clarity. The core of the app is a tabbed "Clause Explorer," which breaks the contract into digestible sections (Responsibilities, Policies, Performance), preventing overwhelm. A dedicated visualization section uses a Chart.js bar chart to make the abstract "5 deals" performance goal tangible and easy to grasp against the internship timeline. Finally, an interactive acknowledgement section with checkboxes, signature input, and optional file uploads ensures deliberate user consent and provides an option to send agreement via email, with instructions for manual file attachment. This structure was chosen to guide the intern through the agreement logically, from summary to detail to action, making a formal document more approachable and understandable. The addition of a 3D animated background enhances visual appeal without detracting from content. -->
     <!-- Visualization & Content Choices: 
         - Report Info: Entire contract text -> Goal: Organize/Inform -> Viz/Presentation: Tabbed interface -> Interaction: Click tabs to reveal content -> Justification: Breaks down intimidating wall of text into manageable, thematic sections. Method: HTML/CSS/JS.
         - Report Info: Key terms (Duration, Pay, Goal) -> Goal: Inform/Highlight -> Viz/Presentation: Key metric "cards" -> Interaction: Static display for quick scanning -> Justification: Provides an 'at-a-glance' summary of the most critical information upfront. Method: HTML/Tailwind.
         - Report Info: Performance Goal (5 deals in ~30 days) -> Goal: Compare/Change -> Viz/Presentation: Bar Chart -> Interaction: Hover for tooltips (labels provide context) -> Justification: Visualizes the performance target against the time-frame, making the requirement clear and quantifiable. Library: Chart.js (Canvas).
         - Report Info: Termination clauses -> Goal: Inform/Organize -> Viz/Presentation: Structured list with icons -> Interaction: Static display -> Justification: Uses visual cues (icons) and clear formatting to highlight serious consequences, improving readability and retention. Method: HTML/Tailwind.
-        - Report Info: Agreement signature -> Goal: Action/Confirm -> Viz/Presentation: Checkboxes, text inputs, and a button -> Interaction: User must check all boxes and fill signature to enable the button; clicking button generates mailto link -> Justification: Creates a clear, intentional action for the user, confirming they have reviewed each part of the contract and providing a digital signature option. Method: HTML/JS.
+        - Report Info: Agreement signature -> Goal: Action/Confirm -> Viz/Presentation: Checkboxes, text inputs, and a button -> Interaction: User must check all boxes and fill signature to enable the button; clicking button generates mailto link with contract text and instructions for manual file attachment -> Justification: Creates a clear, intentional action for the user, confirming they have reviewed each part of the contract and providing a digital signature option, while handling file uploads via clear instructions. Method: HTML/JS.
+        - Overall Aesthetic: Background -> Goal: Engage/Attract -> Viz/Presentation: 3D animated particle background with purple/black fade -> Interaction: Subtle movement -> Justification: Enhances visual appeal and modern feel. Method: Three.js (Canvas) + CSS Gradient.
     -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a0033 0%, #000000 100%); /* Purple to Black fade */
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+        #three-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1; /* Behind content */
         }
         .tab-button.active {
-            border-color: #0d9488;
-            background-color: #f0fdfa;
-            color: #134e4a;
+            border-color: #2dd4bf; /* Brighter teal for active border */
+            background-color: #1f2937; /* Darker gray for active background */
+            color: #99f6e4; /* Lighter teal for active text */
             font-weight: 600;
         }
         .chart-container {
@@ -36,67 +48,81 @@
             width: 100%;
             max-width: 700px;
         }
+
+        /* Fade-in animation for sections */
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
     </style>
 </head>
-<body class="bg-stone-50 text-slate-800">
+<body class="bg-gray-900 text-gray-100">
 
-    <div class="container mx-auto max-w-5xl p-4 sm:p-6 lg:p-8">
+    <canvas id="three-canvas"></canvas>
 
-        <header class="text-center mb-10">
-            <h1 class="text-3xl sm:text-4xl font-bold text-teal-800">Interactive Internship Agreement</h1>
-            <p class="mt-2 text-lg text-slate-600">A clear guide to your internship with Shayan Irfan THE MASTERMINDS.</p>
+    <div class="container mx-auto max-w-5xl p-4 sm:p-6 lg:p-8 relative z-10">
+
+        <header class="text-center mb-10 fade-in" style="animation-delay: 0.2s;">
+            <h1 class="text-3xl sm:text-4xl font-bold text-teal-400">Interactive Internship Agreement</h1>
+            <p class="mt-2 text-lg text-gray-300">A clear guide to your internship with Shayan Irfan THE MASTERMINDS.</p>
         </header>
 
-        <section id="overview" class="mb-12">
-            <h2 class="text-2xl font-bold text-slate-700 mb-4 border-b-2 border-teal-200 pb-2">At a Glance: Key Terms</h2>
-            <p class="text-slate-600 mb-6">This is a summary of the most important terms of your internship. Please review the detailed sections for complete information. This summary helps you quickly understand the core expectations and structure of the program.</p>
+        <section id="overview" class="mb-12 fade-in" style="animation-delay: 0.4s;">
+            <h2 class="text-2xl font-bold text-gray-200 mb-4 border-b-2 border-teal-600 pb-2">At a Glance: Key Terms</h2>
+            <p class="text-gray-300 mb-6">This is a summary of the most important terms of your internship. Please review the detailed sections for complete information. This summary helps you quickly understand the core expectations and structure of the program.</p>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
-                    <h3 class="font-bold text-teal-700 text-xl mb-2">Internship Duration</h3>
+                <div class="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700">
+                    <h3 class="font-bold text-teal-400 text-xl mb-2">Internship Duration</h3>
                     <p class="text-3xl font-bold">1 Month</p>
-                    <p class="text-slate-500 mt-1">July 22, 2025 - August 22, 2025</p>
+                    <p class="text-gray-400 mt-1">July 22, 2025 - August 22, 2025</p>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
-                    <h3 class="font-bold text-teal-700 text-xl mb-2">Compensation Model</h3>
-                    <p class="text-3xl font-bold">Unpaid</p>
-                    <p class="text-slate-500 mt-1">Commission-based rewards for performance</p>
+                <div class="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700">
+                    <h3 class="font-bold text-teal-400 text-xl mb-2">Compensation Model</h3>
+                    <p class="text-3xl font-bold">Commissions Only</p>
+                    <p class="text-gray-400 mt-1">Until formally hired</p>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
-                    <h3 class="font-bold text-teal-700 text-xl mb-2">Primary Goal</h3>
+                <div class="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700">
+                    <h3 class="font-bold text-teal-400 text-xl mb-2">Primary Goal</h3>
                     <p class="text-3xl font-bold">5 Deals</p>
-                    <p class="text-slate-500 mt-1">To be eligible for future opportunities</p>
+                    <p class="text-gray-400 mt-1">To be eligible for future opportunities</p>
                 </div>
             </div>
         </section>
 
-        <section id="clause-explorer" class="mb-12">
-            <h2 class="text-2xl font-bold text-slate-700 mb-4 border-b-2 border-teal-200 pb-2">Clause Explorer</h2>
-            <p class="text-slate-600 mb-6">This section breaks down the full legal agreement into key areas. Click on each tab to review the specific terms and conditions related to your role, responsibilities, and the company's policies. This interactive format is designed to make the contract easier to digest.</p>
-            <div class="flex flex-wrap border-b border-slate-300">
-                <button class="tab-button py-2 px-4 border-b-2 border-transparent transition-colors duration-300" data-tab="performance">Performance & Rewards</button>
-                <button class="tab-button py-2 px-4 border-b-2 border-transparent transition-colors duration-300" data-tab="conduct">Conduct & Policies</button>
-                <button class="tab-button py-2 px-4 border-b-2 border-transparent transition-colors duration-300" data-tab="legal">Legal & Formalities</button>
+        <section id="clause-explorer" class="mb-12 fade-in" style="animation-delay: 0.6s;">
+            <h2 class="text-2xl font-bold text-gray-200 mb-4 border-b-2 border-teal-600 pb-2">Clause Explorer</h2>
+            <p class="text-gray-300 mb-6">This section breaks down the full legal agreement into key areas. Click on each tab to review the specific terms and conditions related to your role, responsibilities, and the company's policies. This interactive format is designed to make the contract easier to digest.</p>
+            <div class="flex flex-wrap border-b border-gray-700">
+                <button class="tab-button py-2 px-4 border-b-2 border-transparent text-gray-300 transition-colors duration-300" data-tab="performance">Performance & Rewards</button>
+                <button class="tab-button py-2 px-4 border-b-2 border-transparent text-gray-300 transition-colors duration-300" data-tab="conduct">Conduct & Policies</button>
+                <button class="tab-button py-2 px-4 border-b-2 border-transparent text-gray-300 transition-colors duration-300" data-tab="legal">Legal & Formalities</button>
             </div>
             <div class="mt-6">
                 <div id="performance" class="tab-content">
-                    <h3 class="text-xl font-semibold mb-3 text-teal-800">Performance, Goals & Rewards</h3>
-                    <div class="space-y-4 text-slate-700">
+                    <h3 class="text-xl font-semibold mb-3 text-teal-400">Performance, Goals & Rewards</h3>
+                    <div class="space-y-4 text-gray-300">
                         <p><strong>Internship Nature:</strong> This is a conditional, unpaid internship with a performance-based opportunity for future hiring. The intern must achieve a minimum of 5 confirmed business deals during this period to be considered for a permanent or extended position.</p>
                         <p><strong>Commission Policy:</strong> Interns will be entitled to commission for each successful deal even before being formally hired. Commission payments will be made after verification and closure of each deal, based on agreed terms. This does not guarantee employment but rewards performance during the internship period.</p>
                         <p><strong>Performance & Conduct Goal:</strong> A minimum of 5 business deals must be completed by August 22, 2025.</p>
                     </div>
                 </div>
                 <div id="conduct" class="tab-content hidden">
-                    <h3 class="text-xl font-semibold mb-3 text-teal-800">Professional Conduct & Company Policies</h3>
-                    <div class="space-y-4 text-slate-700">
+                    <h3 class="text-xl font-semibold mb-3 text-teal-400">Professional Conduct & Company Policies</h3>
+                    <div class="space-y-4 text-gray-300">
                         <p><strong>Confidentiality & Non-Disclosure:</strong> The intern shall not discuss or leak any internal discussions, communications, strategies, or client information, during or after the internship. Breach of confidentiality will result in immediate termination and may lead to legal consequences.</p>
                         <p><strong>Intellectual Property:</strong> All data, contacts, materials, content, and strategies created or accessed during the internship are the sole property of Shayan Irfan. The intern shall not reuse, distribute, or claim ownership over any such material after departure.</p>
                         <p><strong>General Conduct:</strong> The intern must maintain professional conduct, daily check-ins, and responsiveness. Failure to perform or inappropriate behavior may result in immediate dismissal.</p>
                     </div>
                 </div>
                 <div id="legal" class="tab-content hidden">
-                     <h3 class="text-xl font-semibold mb-3 text-teal-800">Legal Terms & Conditions</h3>
-                    <div class="space-y-4 text-slate-700">
+                     <h3 class="text-xl font-semibold mb-3 text-teal-400">Legal Terms & Conditions</h3>
+                    <div class="space-y-4 text-gray-300">
                         <p><strong>Termination Clause:</strong> This contract can be terminated without notice if the intern violates any confidentiality terms, shows negligence, misconduct, or fails to perform, or engages in any behavior that negatively impacts the company.</p>
                         <p><strong>No Employment Guarantee:</strong> This agreement does not guarantee permanent hiring. Selection for employment depends on final evaluation and performance-based eligibility.</p>
                         <p><strong>Parties to the Agreement:</strong> This Internship Agreement ("Agreement") is made and entered into on this 22nd day of July, 2025, by and between Shayan Irfan THE MASTERMINDS, and the Intern.</p>
@@ -105,87 +131,111 @@
             </div>
         </section>
 
-        <section id="goal-visualization" class="mb-12">
-            <h2 class="text-2xl font-bold text-slate-700 mb-4 border-b-2 border-teal-200 pb-2">Internship Goal Visualization</h2>
-            <p class="text-slate-600 mb-6">To help you visualize your goal, this chart illustrates the target of securing 5 business deals within the one-month internship period. This is the primary metric for being considered for future roles.</p>
-            <div class="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-slate-200">
+        <section id="goal-visualization" class="mb-12 fade-in" style="animation-delay: 0.8s;">
+            <h2 class="text-2xl font-bold text-gray-200 mb-4 border-b-2 border-teal-600 pb-2">Internship Goal Visualization</h2>
+            <p class="text-gray-300 mb-6">To help you visualize your goal, this chart illustrates the target of securing 5 business deals within the one-month internship period. This is the primary metric for being considered for future roles.</p>
+            <div class="bg-gray-800 p-4 sm:p-6 rounded-lg shadow-lg border border-gray-700">
                 <div class="chart-container">
                     <canvas id="performanceChart"></canvas>
                 </div>
             </div>
         </section>
         
-        <section id="termination-conditions" class="mb-12">
-            <h2 class="text-2xl font-bold text-slate-700 mb-4 border-b-2 border-teal-200 pb-2">Grounds for Immediate Termination</h2>
-            <p class="text-slate-600 mb-6">It is critical to understand the actions that could lead to the immediate termination of this agreement. The following points are grounds for dismissal without notice. Upholding these standards is essential for a successful internship.</p>
+        <section id="termination-conditions" class="mb-12 fade-in" style="animation-delay: 1s;">
+            <h2 class="text-2xl font-bold text-gray-200 mb-4 border-b-2 border-teal-600 pb-2">Grounds for Immediate Termination</h2>
+            <p class="text-gray-300 mb-6">It is critical to understand the actions that could lead to the immediate termination of this agreement. The following points are grounds for dismissal without notice. Upholding these standards is essential for a successful internship.</p>
             <div class="space-y-4">
-                <div class="flex items-start bg-red-50 border border-red-200 rounded-lg p-4">
-                    <span class="text-2xl mr-4 text-red-600">&#128274;</span>
+                <div class="flex items-start bg-red-950 border border-red-700 rounded-lg p-4">
+                    <span class="text-2xl mr-4 text-red-400">&#128274;</span>
                     <div>
-                        <h4 class="font-bold text-red-800">Confidentiality Breach</h4>
-                        <p class="text-red-700">Leaking any internal discussions, strategies, or client information.</p>
+                        <h4 class="font-bold text-red-200">Confidentiality Breach</h4>
+                        <p class="text-red-300">Leaking any internal discussions, strategies, or client information.</p>
                     </div>
                 </div>
-                <div class="flex items-start bg-red-50 border border-red-200 rounded-lg p-4">
-                     <span class="text-2xl mr-4 text-red-600">&#128172;</span>
+                <div class="flex items-start bg-red-950 border border-red-700 rounded-lg p-4">
+                     <span class="text-2xl mr-4 text-red-400">&#128172;</span>
                      <div>
-                        <h4 class="font-bold text-red-800">Misconduct or Negligence</h4>
-                        <p class="text-red-700">Failure to perform duties, unprofessional behavior, or lack of responsiveness.</p>
+                        <h4 class="font-bold text-red-200">Misconduct or Negligence</h4>
+                        <p class="text-red-300">Failure to perform duties, unprofessional behavior, or lack of responsiveness.</p>
                     </div>
                 </div>
-                <div class="flex items-start bg-red-50 border border-red-200 rounded-lg p-4">
-                    <span class="text-2xl mr-4 text-red-600">&#128078;</span>
+                <div class="flex items-start bg-red-950 border border-red-700 rounded-lg p-4">
+                    <span class="text-2xl mr-4 text-red-400">&#128078;</span>
                      <div>
-                        <h4 class="font-bold text-red-800">Negative Impact</h4>
-                        <p class="text-red-700">Engaging in any activity that reflects poorly on the company.</p>
+                        <h4 class="font-bold text-red-200">Negative Impact</h4>
+                        <p class="text-red-300">Engaging in any activity that reflects poorly on the company.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="acknowledgement">
-            <h2 class="text-2xl font-bold text-slate-700 mb-4 border-b-2 border-teal-200 pb-2">Acknowledgement and Agreement</h2>
-            <p class="text-slate-600 mb-6">Please fill in your details and then carefully read and check each box to confirm you understand and agree to the terms. Clicking "Agree and Finalize" will serve as your electronic signature and send a confirmation email.</p>
+        <section id="acknowledgement" class="fade-in" style="animation-delay: 1.2s;">
+            <h2 class="text-2xl font-bold text-gray-200 mb-4 border-b-2 border-teal-600 pb-2">Acknowledgement and Agreement</h2>
+            <p class="text-gray-300 mb-6">Please fill in your details and then carefully read and check each box to confirm you understand and agree to the terms. Clicking "Agree and Finalize" will serve as your electronic signature and send a confirmation email.</p>
 
-            <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700">
                 <div class="space-y-4 mb-6">
                     <div>
-                        <label for="intern-name" class="font-semibold text-slate-700 block mb-1">Intern Name:</label>
-                        <input type="text" id="intern-name" class="w-full p-2 border border-slate-300 rounded-md focus:ring-teal-500 focus:border-teal-500" placeholder="Your Full Name">
+                        <label for="intern-name" class="font-semibold text-gray-300 block mb-1">Intern Name:</label>
+                        <input type="text" id="intern-name" class="w-full p-2 border border-gray-700 rounded-md focus:ring-teal-500 focus:border-teal-500 bg-gray-700 text-gray-100 placeholder-gray-400" placeholder="Your Full Name">
                     </div>
                     <div>
-                        <label for="intern-cnic" class="font-semibold text-slate-700 block mb-1">CNIC/ID Number:</label>
-                        <input type="text" id="intern-cnic" class="w-full p-2 border border-slate-300 rounded-md focus:ring-teal-500 focus:border-teal-500" placeholder="Your CNIC or ID Number">
+                        <label for="intern-age" class="font-semibold text-gray-300 block mb-1">Age:</label>
+                        <input type="number" id="intern-age" class="w-full p-2 border border-gray-700 rounded-md focus:ring-teal-500 focus:border-teal-500 bg-gray-700 text-gray-100 placeholder-gray-400" placeholder="Your Age">
                     </div>
                     <div>
-                        <label for="intern-signature" class="font-semibold text-slate-700 block mb-1">Your Signature (Type your full name):</label>
-                        <input type="text" id="intern-signature" class="w-full p-2 border border-slate-300 rounded-md focus:ring-teal-500 focus:border-teal-500" placeholder="Type your name to sign">
+                        <label for="intern-phone" class="font-semibold text-gray-300 block mb-1">Phone Number:</label>
+                        <input type="tel" id="intern-phone" class="w-full p-2 border border-gray-700 rounded-md focus:ring-teal-500 focus:border-teal-500 bg-gray-700 text-gray-100 placeholder-gray-400" placeholder="e.g., +923001234567">
+                    </div>
+                    <div>
+                        <label for="intern-city" class="font-semibold text-gray-300 block mb-1">City:</label>
+                        <input type="text" id="intern-city" class="w-full p-2 border border-gray-700 rounded-md focus:ring-teal-500 focus:border-teal-500 bg-gray-700 text-gray-100 placeholder-gray-400" placeholder="Your City">
+                    </div>
+                    <div>
+                        <label for="intern-cnic" class="font-semibold text-gray-300 block mb-1">CNIC/ID Number:</label>
+                        <input type="text" id="intern-cnic" class="w-full p-2 border border-gray-700 rounded-md focus:ring-teal-500 focus:border-teal-500 bg-gray-700 text-gray-100 placeholder-gray-400" placeholder="Your CNIC or ID Number">
+                    </div>
+                    <div>
+                        <label for="intern-signature" class="font-semibold text-gray-300 block mb-1">Your Signature (Type your full name):</label>
+                        <input type="text" id="intern-signature" class="w-full p-2 border border-gray-700 rounded-md focus:ring-teal-500 focus:border-teal-500 bg-gray-700 text-gray-100 placeholder-gray-400" placeholder="Type your name to sign">
+                    </div>
+                    <div class="border-t border-gray-700 pt-4 mt-4">
+                        <p class="font-semibold text-gray-300 mb-2">Optional Documents:</p>
+                        <p class="text-sm text-gray-400 mb-4">After clicking "Agree and Finalize", your email client will open. Please remember to manually attach your CNIC or Birth Certificate to that email if required.</p>
+                        <div>
+                            <label for="cnic-upload" class="font-semibold text-gray-300 block mb-1">Upload CNIC (Optional):</label>
+                            <input type="file" id="cnic-upload" class="w-full p-2 border border-gray-700 rounded-md focus:ring-teal-500 focus:border-teal-500 bg-gray-700 text-gray-100">
+                        </div>
+                        <div class="mt-4">
+                            <label for="birth-certificate-upload" class="font-semibold text-gray-300 block mb-1">Upload Birth Certificate (Optional):</label>
+                            <input type="file" id="birth-certificate-upload" class="w-full p-2 border border-gray-700 rounded-md focus:ring-teal-500 focus:border-teal-500 bg-gray-700 text-gray-100">
+                        </div>
                     </div>
                 </div>
                 
                 <div class="space-y-4 mb-6">
                     <label class="flex items-center">
-                        <input type="checkbox" class="h-4 w-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500 agreement-checkbox">
-                        <span class="ml-2 text-slate-700">I have read and agree to the Term of Internship and its conditional, unpaid nature.</span>
+                        <input type="checkbox" class="h-4 w-4 text-teal-500 border-gray-600 rounded focus:ring-teal-500 agreement-checkbox bg-gray-700">
+                        <span class="ml-2 text-gray-300">I have read and agree to the Term of Internship and its conditional, unpaid nature.</span>
                     </label>
                      <label class="flex items-center">
-                        <input type="checkbox" class="h-4 w-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500 agreement-checkbox">
-                        <span class="ml-2 text-slate-700">I understand the performance goal and the commission-based reward policy.</span>
+                        <input type="checkbox" class="h-4 w-4 text-teal-500 border-gray-600 rounded focus:ring-teal-500 agreement-checkbox bg-gray-700">
+                        <span class="ml-2 text-gray-300">I understand the performance goal and the commission-based reward policy.</span>
                     </label>
                     <label class="flex items-center">
-                        <input type="checkbox" class="h-4 w-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500 agreement-checkbox">
-                        <span class="ml-2 text-slate-700">I agree to the Confidentiality, Non-Disclosure, and Intellectual Property terms.</span>
+                        <input type="checkbox" class="h-4 w-4 text-teal-500 border-gray-600 rounded focus:ring-teal-500 agreement-checkbox bg-gray-700">
+                        <span class="ml-2 text-gray-300">I agree to the Confidentiality, Non-Disclosure, and Intellectual Property terms.</span>
                     </label>
                     <label class="flex items-center">
-                        <input type="checkbox" class="h-4 w-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500 agreement-checkbox">
-                        <span class="ml-2 text-slate-700">I acknowledge the grounds for termination and that this agreement is not a guarantee of employment.</span>
+                        <input type="checkbox" class="h-4 w-4 text-teal-500 border-gray-600 rounded focus:ring-teal-500 agreement-checkbox bg-gray-700">
+                        <span class="ml-2 text-gray-300">I acknowledge the grounds for termination and that this agreement is not a guarantee of employment.</span>
                     </label>
                 </div>
 
-                <button id="agree-button" class="w-full bg-teal-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:bg-slate-400 disabled:cursor-not-allowed transition-colors duration-300" disabled>
+                <button id="agree-button" class="w-full bg-teal-700 text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors duration-300" disabled>
                     Agree and Finalize Contract
                 </button>
-                 <p id="agreement-message" class="text-center mt-4 text-green-700 font-semibold hidden">Thank you for agreeing to the terms! Please check your email client to send the confirmation.</p>
+                 <p id="agreement-message" class="text-center mt-4 text-green-500 font-semibold hidden">Thank you for agreeing to the terms! Please check your email client to send the confirmation and manually attach any required documents.</p>
             </div>
         </section>
 
@@ -217,8 +267,8 @@
                     datasets: [{
                         label: 'Your Current Progress',
                         data: [0],
-                        backgroundColor: 'rgba(15, 118, 110, 0.6)',
-                        borderColor: 'rgba(13, 94, 88, 1)',
+                        backgroundColor: 'rgba(15, 118, 110, 0.6)', // Teal shade
+                        borderColor: 'rgba(13, 94, 88, 1)', // Darker teal
                         borderWidth: 1,
                         barPercentage: 0.4
                     }]
@@ -232,7 +282,22 @@
                             max: 6,
                             title: {
                                 display: true,
-                                text: 'Confirmed Business Deals'
+                                text: 'Confirmed Business Deals',
+                                color: '#d1d5db' // Gray-300 for title
+                            },
+                            ticks: {
+                                color: '#d1d5db' // Gray-300 for ticks
+                            },
+                            grid: {
+                                color: '#4b5563' // Gray-600 for grid lines
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#d1d5db' // Gray-300 for ticks
+                            },
+                            grid: {
+                                color: '#4b5563' // Gray-600 for grid lines
                             }
                         }
                     },
@@ -249,7 +314,7 @@
                                     type: 'line',
                                     yMin: 5,
                                     yMax: 5,
-                                    borderColor: 'rgb(220, 38, 38)',
+                                    borderColor: 'rgb(220, 38, 38)', // Red-600
                                     borderWidth: 2,
                                     borderDash: [6, 6],
                                     label: {
@@ -258,7 +323,8 @@
                                         position: 'end',
                                         backgroundColor: 'rgba(220, 38, 38, 0.8)',
                                         font: {
-                                          weight: 'bold'
+                                          weight: 'bold',
+                                          color: '#f9fafb' // Gray-50 for label text
                                         }
                                     }
                                 }
@@ -270,6 +336,9 @@
             
             const checkboxes = document.querySelectorAll('.agreement-checkbox');
             const internNameInput = document.getElementById('intern-name');
+            const internAgeInput = document.getElementById('intern-age');
+            const internPhoneInput = document.getElementById('intern-phone');
+            const internCityInput = document.getElementById('intern-city');
             const internCnicInput = document.getElementById('intern-cnic');
             const internSignatureInput = document.getElementById('intern-signature');
             const agreeButton = document.getElementById('agree-button');
@@ -277,8 +346,14 @@
 
             function checkAgreement() {
                 const allCheckboxesChecked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+                const nameFilled = internNameInput.value.trim() !== '';
+                const ageFilled = internAgeInput.value.trim() !== '';
+                const phoneFilled = internPhoneInput.value.trim() !== '';
+                const cityFilled = internCityInput.value.trim() !== '';
+                const cnicFilled = internCnicInput.value.trim() !== '';
                 const signatureFilled = internSignatureInput.value.trim() !== '';
-                agreeButton.disabled = !(allCheckboxesChecked && signatureFilled);
+                
+                agreeButton.disabled = !(allCheckboxesChecked && nameFilled && ageFilled && phoneFilled && cityFilled && cnicFilled && signatureFilled);
             }
 
             checkboxes.forEach(checkbox => {
@@ -286,23 +361,86 @@
             });
 
             internNameInput.addEventListener('input', checkAgreement);
+            internAgeInput.addEventListener('input', checkAgreement);
+            internPhoneInput.addEventListener('input', checkAgreement);
+            internCityInput.addEventListener('input', checkAgreement);
             internCnicInput.addEventListener('input', checkAgreement);
             internSignatureInput.addEventListener('input', checkAgreement);
             
             agreeButton.addEventListener('click', () => {
                 if(!agreeButton.disabled) {
                     const internName = internNameInput.value.trim();
+                    const internAge = internAgeInput.value.trim();
+                    const internPhone = internPhoneInput.value.trim();
+                    const internCity = internCityInput.value.trim();
                     const internCnic = internCnicInput.value.trim();
                     const internSignature = internSignatureInput.value.trim();
+
+                    // Extracting full contract text
+                    let fullContractText = `INTERNSHIP CONTRACT AGREEMENT\n\n`;
+                    fullContractText += `This Internship Agreement ("Agreement") is made and entered into on this 22nd day of July, 2025, by and between:\n`;
+                    fullContractText += `Shayan Irfan THE MASTERMINDS , and\n`;
+                    fullContractText += `Intern Name: ${internName}\n`;
+                    fullContractText += `CNIC/ID Number: ${internCnic}\n\n`;
+
+                    fullContractText += `1. Term of Internship\n`;
+                    fullContractText += `This internship shall begin on July 22, 2025, and end on August 22, 2025, unless terminated earlier in accordance with this Agreement.\n\n`;
+
+                    fullContractText += `2. Internship Nature\n`;
+                    fullContractText += `This is a conditional, unpaid internship with a performance-based opportunity for future hiring. The intern must achieve a minimum of 5 confirmed business deals during this period to be considered for a permanent or extended position.\n\n`;
+
+                    fullContractText += `3. Commission Policy\n`;
+                    fullContractText += `Interns will be entitled to commission for each successful deal even before being formally hired.\n`;
+                    fullContractText += `Commission payments will be made after verification and closure of each deal, based on agreed terms.\n`;
+                    fullContractText += `This does not guarantee employment but rewards performance during the internship period.\n\n`;
+
+                    fullContractText += `4. Confidentiality & Non-Disclosure\n`;
+                    fullContractText += `The intern shall not discuss or leak any internal discussions, communications, strategies, or client information, during or after the internship.\n`;
+                    fullContractText += `Breach of confidentiality will result in immediate termination and may lead to legal consequences.\n\n`;
+
+                    fullContractText += `5. Intellectual Property\n`;
+                    fullContractText += `All data, contacts, materials, content, and strategies created or accessed during the internship are the sole property of Shayan Irfan.\n`;
+                    fullContractText += `The intern shall not reuse, distribute, or claim ownership over any such material after departure.\n\n`;
+
+                    fullContractText += `6. Performance & Conduct\n`;
+                    fullContractText += `A minimum of 5 business deals must be completed by August 22, 2025.\n`;
+                    fullContractText += `The intern must maintain professional conduct, daily check-ins, and responsiveness.\n`;
+                    fullContractText += `Failure to perform or inappropriate behavior may result in immediate dismissal.\n\n`;
+
+                    fullContractText += `7. Termination Clause\n`;
+                    fullContractText += `This contract can be terminated without notice if:\n`;
+                    fullContractText += `The intern violates any confidentiality terms.\n`;
+                    fullContractText += `Shows negligence, misconduct, or fails to perform.\n`;
+                    fullContractText += `Engages in any behavior that negatively impacts the company.\n\n`;
+
+                    fullContractText += `8. No Employment Guarantee\n`;
+                    fullContractText += `This agreement does not guarantee permanent hiring. Selection for employment depends on final evaluation and performance-based eligibility.\n\n`;
+
+                    fullContractText += `9. Acknowledgement\n`;
+                    fullContractText += `By signing below, the intern confirms agreement to all the above terms and conditions.\n\n`;
+                    
+                    fullContractText += `Signed by:\n`;
+                    fullContractText += `Shayan Irfan\n\n`;
+                    fullContractText += `Date: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}\n`;
+                    fullContractText += `Intern Signature: ${internSignature}\n\n`;
+                    fullContractText += `Date: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}\n\n`;
+
 
                     const subject = encodeURIComponent(`Internship Agreement Confirmation - ${internName}`);
                     const body = encodeURIComponent(
                         `Dear Shayan Irfan THE MASTERMINDS,\n\n` +
                         `I, ${internName},\n` +
+                        `Age: ${internAge},\n` +
+                        `Phone Number: ${internPhone},\n` +
+                        `City: ${internCity},\n` +
                         `CNIC/ID Number: ${internCnic},\n` +
                         `hereby confirm my agreement to the terms and conditions of the Internship Agreement, as acknowledged and signed electronically.\n\n` +
                         `Electronic Signature: ${internSignature}\n` +
                         `Date: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}\n\n` +
+                        `--- Full Internship Agreement Text ---\n\n` +
+                        `${fullContractText}\n\n` +
+                        `--------------------------------------\n\n` +
+                        `Please remember to manually attach your CNIC or Birth Certificate to this email before sending, if required.\n\n` +
                         `Thank you.`
                     );
                     
@@ -313,6 +451,78 @@
                 }
             });
 
+            // Three.js Background Animation
+            let scene, camera, renderer, particles;
+            const canvas = document.getElementById('three-canvas');
+
+            function initThreeJS() {
+                scene = new THREE.Scene();
+                camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.setPixelRatio(window.devicePixelRatio);
+
+                // Particle geometry
+                const geometry = new THREE.BufferGeometry();
+                const vertices = [];
+                const colors = [];
+                const sizes = [];
+
+                for (let i = 0; i < 500; i++) {
+                    vertices.push(
+                        (Math.random() * 2 - 1) * 500, // x
+                        (Math.random() * 2 - 1) * 500, // y
+                        (Math.random() * 2 - 1) * 500  // z
+                    );
+                    // Purple and black tones for particles
+                    const color = new THREE.Color();
+                    color.setHSL(0.7 + Math.random() * 0.1, 0.8, 0.5 + Math.random() * 0.2); // HSL for purple hues
+                    colors.push(color.r, color.g, color.b);
+                    sizes.push(Math.random() * 5 + 1);
+                }
+
+                geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+                geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+                geometry.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
+
+                // Particle material
+                const material = new THREE.PointsMaterial({
+                    size: 1,
+                    vertexColors: true,
+                    transparent: true,
+                    opacity: 0.7,
+                    blending: THREE.AdditiveBlending,
+                    sizeAttenuation: true
+                });
+
+                particles = new THREE.Points(geometry, material);
+                scene.add(particles);
+
+                camera.position.z = 100;
+
+                window.addEventListener('resize', onWindowResize, false);
+            }
+
+            function onWindowResize() {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+
+            function animate() {
+                requestAnimationFrame(animate);
+
+                particles.rotation.x += 0.0005;
+                particles.rotation.y += 0.0008;
+
+                renderer.render(scene, camera);
+            }
+
+            // Initialize Three.js only after the window has loaded
+            window.onload = function() {
+                initThreeJS();
+                animate();
+            };
         });
     </script>
      <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0/dist/chartjs-plugin-annotation.min.js"></script>
